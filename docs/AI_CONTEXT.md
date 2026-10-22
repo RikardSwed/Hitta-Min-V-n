@@ -1,24 +1,9 @@
-# AI-överlämning – läs denna först
+# AI CONTEXT – Stadens Hemlighet
 
-## Uppdrag
-Fortsätt utveckla `Stadens Hemlighet`, ett vänligt handritat 2D-Metroidvania för webben/GitHub Pages. Användaren vill kunna ladda ner en ZIP och själv publicera på GitHub. Inga externa beroenden önskas för första versionerna.
+Aktuell version: 0.4.0. Användaren har uttryckligen godkänt karaktärsarket `a_clean_concept_art_game_asset_style_composite_ima.png` och parkmiljöerna i samma ark. Huvudpersonen är en blond tonårspojke i vit huvtröja med röd huva, mörka byxor och svärd. Inga externa exempelbilder eller andra stilar får användas som referens utan godkännande.
 
-## Viktiga låsta beslut
-- Huvudperson: blond tonårspojke, skolstil (vit huvtröja/röd huva, mörka byxor, sneakers, ryggsäck), svärd.
-- Värld: modern storstad med park, skola, stadshus, parkeringsgarage, höghus, tunnelbana m.m.
-- Grafik: varm, detaljerad, tecknad 2D; inspiration från klassiska handritade plattformsspel, men eget formspråk.
-- Maxenergi **99**, inte 99 separata liv. Behåll spelkänslan från v0.1 om inte användaren ber om ändring.
-- CSS ska ligga i `css/`, JavaScript i `js/`.
+Spelet är en vänlig Metroidvania i modern stad. Första banan är Stadsparken. Maximal energi 99. Teknik: index.html, css/style.css, js/game.js, assets/. GitHub Pages utan byggsteg.
 
-## Nuvarande status
-Senaste projektversion v0.2. v0.1 testades och fungerade enligt användaren. v0.2 integrerar en tillfällig karaktärsbild från konceptskissen och ett parkutsnitt som parallax, plus dokumentation. v0.2 behöver testas av användaren. Det är **inte** färdiga spritesheet-animationer.
+Version 0.4 innehåller utklippta sprites från det godkända konceptarket, en illustrerad parkbakgrund från samma ark, och befintlig fysik. Det är en förbättrad grafisk prototyp, inte ännu en pixelperfekt rekonstruktion av referensbilden. Nästa steg: speltesta, korrigera bildkanter och skapa en sammanhängande illustrerad tilemap med bättre höjd- och breddanpassning.
 
-## Återupptagning
-1. Läs `README.md`, detta dokument, `GAME_DESIGN.md`, `ART_STYLE.md`, `TECHNICAL.md`, `ROADMAP.md` och `CHANGELOG.md`.
-2. Läs faktiska filer, särskilt `js/game.js`; lita inte bara på dokumentationen.
-3. Fråga hur senaste versionen fungerade innan större ändringar.
-4. Behåll fungerande mekanik; leverera nya kompletta ZIP-versioner, med korrekt relativa sökvägar.
-5. Uppdatera alla relevanta dokument efter varje version.
-
-## Kända risker
-Tillfällig PNG-friläggning kan ge ljusa kanter eller bakgrundsrester. Animerad rörelse är än så länge transformation av stillbild. Se ROADMAP för nästa steg.
+För återupptagning: läs detta dokument, CHANGELOG, TECHNICAL och spelkoden. Utgå alltid från senaste ZIP-filen.

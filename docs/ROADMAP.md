@@ -1,21 +1,10 @@
 # Roadmap
 
-## Klart
-- [x] Spelbar stadsparksbana i v0.1 (användaren bekräftade att spelet fungerade).
-- [x] 99 maxenergi, svärd, hopp, duckning, framåtvolt, robotar, kapslar, kontrollpunkt och mål.
-- [x] CSS flyttad till `css/`, sökväg i `index.html` uppdaterad.
-- [x] Första integration av konceptgrafik i v0.2.
-- [x] Projektdokumentation för återupptagning.
-
-## Nästa prioritet
-- [ ] Användaren testar v0.2 på GitHub Pages.
-- [ ] Fixa eventuella fel från test.
-- [ ] Rita konsekventa separata sprites för varje rörelse och skapa riktiga animationer.
-- [ ] Ersätt tillfälliga miljöutklipp med sömlösa parallaxlager och tiles.
-- [ ] Lägg till musik och fler ljudeffekter.
-- [ ] Utveckla skolan som nästa bana och övergång mellan områden.
-
-## Längre fram
-- [ ] Världskarta, återbesök och upplåsningsbara förmågor.
-- [ ] Fler fiender, pussel, hemliga rum och bossar.
-- [ ] Bättre sparsystem, inställningar, mobilkontroller.
+- [x] Spelbar stadspark med 99 energi, svärd och framåtvolt
+- [x] CSS i css-mapp och versionsnummer i sidfot
+- [x] v0.4: utklippta sprites för huvudrörelser ur godkänt konceptark
+- [x] v0.4: parkbakgrund från godkända konceptark
+- [ ] Visuell webbläsargranskning och speltest av v0.4
+- [ ] Förbättra spritekanter och justera storlek för alla animationer
+- [ ] Skapa fullständig handritad tilemap med plattformar och detaljer i samma stil
+- [ ] Fler banor och originalmusik

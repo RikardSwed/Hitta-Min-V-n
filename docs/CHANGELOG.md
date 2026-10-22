@@ -1,12 +1,13 @@
 # Versionshistorik
 
-## v0.2 – grafik och dokumentation (2026-10-22)
-- Flyttade `style.css` till `css/style.css` och uppdaterade HTML-länken.
-- Lade till frilagd konceptfigur i skolstil och parkillustration som mjukt parallaxlager.
-- Behöll spelmekaniken från v0.1.
-- Skapade `docs/` med design, grafik, teknik, roadmap, versionshistorik och AI-överlämning.
-- Uppdaterade README.
+## v0.4.0
+- Nytt spritesystem med separata bilder för stå, gå, springa, hoppa, falla, ducka, svärdshugg, framåtvolt och skada.
+- Bilderna är utklippta från de ursprungliga, godkända konceptarken (vit huvtröja, röd huva).
+- Parkens bakgrund använder illustrerade parkmiljöer från samma godkända konceptark.
+- Versionsnummer visas i spel och sidfot.
+- Spelmekanik och 99 energi behålls från v0.3.
 
-## v0.1 – första spelbara prototypen
-- Sidscrollande park, 99 energi, hopp, duckning, svärd, framåtvolt, fiender, kapslar, kontrollpunkt och mål.
-- Användaren bekräftade att spelet fungerade.
+## Begränsningar
+- Källillustrationerna är konceptark, inte ursprungligen avsedda som rena spritesheets. Vissa bildrutor kan ha kvar kantartefakter och rörelserna kan behöva finjusteras.
+- Parkens nivågeometri och stentexturer är ännu inte en exakt rekonstruktion av referensbilden.
+- Test i riktig webbläsare krävs.
