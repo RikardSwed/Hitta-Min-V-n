@@ -1,30 +1,23 @@
-# Stadens Hemlighet – Stadsparken (prototyp 0.1)
+# Stadens Hemlighet – Stadsparken v0.2
 
-Ett fristående 2D-plattformsspel byggt med HTML5 Canvas, CSS och ren JavaScript. Ingen byggprocess eller externa bibliotek behövs.
+Spelbar 2D-plattformsspelprototyp för GitHub Pages. Användaren har bekräftat att v0.1 fungerade. Version 0.2 introducerar konceptgrafik och projektunderlag; behöver testas.
 
-## Spela
-Öppna `index.html` via en lokal webbserver (exempelvis VS Code Live Server eller `python -m http.server 8000`) och besök http://localhost:8000. På GitHub Pages fungerar spelet direkt.
+## Starta
+Öppna via GitHub Pages eller en lokal webbserver (`python -m http.server 8000` i projektmappen). Ingen installation eller byggprocess.
+
+## Filstruktur
+- `index.html` – startsida
+- `css/style.css` – styling
+- `js/game.js` – spelets kod
+- `assets/characters/hero-school-concept.png` – tillfällig karaktärsbild
+- `assets/backgrounds/park-concept.png` – parkillustration
+- `docs/` – alla projektdokument, börja med `docs/AI_CONTEXT.md`
 
 ## Kontroller
-- A/D eller vänster/höger: spring
-- W/upp/mellanslag: hoppa
-- S/ned: ducka
-- J/X: svärd
-- K/C: framåtvolt (kortvarigt skydd)
-- P/Escape: paus
-
-## Spelmekanik
-- Maxenergi 99, startenergi 99.
-- Fiender gör 18 skada, fall kostar 25 energi.
-- Energikapslar ger 15 energi (max 99).
-- Kontrollpunkt vid ungefär halva banan lagras i `localStorage`.
-- Nå skolporten i slutet för att klara banan.
+A/D eller ←/→: gå. W/↑/mellanslag: hoppa. S/↓: ducka. J/X: svärd. K/C: framåtvolt. P/Esc: pausa.
 
 ## GitHub Pages
-1. Skapa ett nytt GitHub-repository.
-2. Ladda upp `index.html`, `style.css` och hela mappen `js/` i repositoryts rot.
-3. Öppna Settings → Pages, välj `Deploy from a branch`, `main` och `/ (root)`.
-4. Öppna länken GitHub visar när publiceringen är klar.
+Ladda upp **innehållet** i ZIP-filen i repositoryts rot, med mappstrukturen intakt. I Settings → Pages välj Deploy from a branch → main → / (root). `index.html` måste ligga i repositoryts rot.
 
-## Nästa steg
-Separata transparenta spritesheets med konsekventa animationsrutor, fler banor, karta, musik och mer avancerad kollisionshantering. Denna prototyp använder ritad Canvas-grafik för att vara fullt spelbar redan nu.
+## Status
+Maxenergi 99, robotfiender, kapslar, kontrollpunkt och skolutgång. Musiken återstår. Karaktären använder en frilagd konceptbild, ännu inte fullständiga handritade animationssprites. Läs `docs/ROADMAP.md`.
