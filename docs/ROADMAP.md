@@ -9,3 +9,8 @@
 2. Skapa sammanhängande handritade sprites med konsekvent figurdesign och bildrutor.
 3. Skapa illustrerade parktiles och objekt i godkänd stil.
 4. Webbläsartesta rörelser, kollisionskanter och grafisk läsbarhet.
+
+## Efter v0.7.0
+- Skapa en riktig sammanhängande sprite-animation, minst 6-8 bildrutor för gång/spring.
+- Skapa fristående illustrationer för träd, lyktor, broar, fontän och sömlösa park-tiles.
+- Visuellt webbläsartesta och rätta bildutskärningar.

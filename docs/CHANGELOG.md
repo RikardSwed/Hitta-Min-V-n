@@ -9,3 +9,8 @@
 
 ## v0.5.0
 - Förbättrad hoppkontroll och spritevisning.
+
+## v0.7.0
+- Renare utsnitt för 13 poser, originalfiler arkiverade.
+- Illustrerad parkbänk, minskad överritning, mindre svärdeffekt.
+- Bevarad minikarta och mekanik från v0.6.0.

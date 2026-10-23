@@ -5,12 +5,13 @@ const parkArt=new Image();parkArt.src='assets/backgrounds/approved-park.png';
 const fountainArt=new Image();fountainArt.src='assets/backgrounds/approved-fountain.png';
 const stoneArt=new Image();stoneArt.src='assets/tiles/stone-bridge.png';
 const mossArt=new Image();mossArt.src='assets/tiles/mossy-stone.png';
+const benchArt=new Image();benchArt.src='assets/backgrounds/illustrated-bench.png';
 const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d');
 const W=960,H=540,WORLD=3900,GROUND=462;
 const overlay=document.querySelector('#overlay'),overlayTitle=document.querySelector('#overlayTitle'),overlayText=document.querySelector('#overlayText');
 let running=false,paused=false,won=false,camera=0,tick=0,sound=true,last=0,checkpoint=80,score=0,particles=[];
 let coyote=0,jumpBuffer=0,heroPose="idle",heroPoseTime=0;
-const VERSION='0.6.0';
+const VERSION='0.7.0';
 let visitedSections=new Set();
 const keys=new Set(),pressed=new Set();
 const platforms=[{x:0,y:GROUND,w:670,h:90},{x:735,y:GROUND,w:690,h:90},{x:1500,y:GROUND,w:670,h:90},{x:2250,y:GROUND,w:700,h:90},{x:3040,y:GROUND,w:860,h:90},
@@ -53,7 +54,7 @@ function background(){
  // Two different park illustrations from the exact concept sheets approved by the player.
  // They scroll more slowly than the platforms for depth.
  if(parkArt.complete&&parkArt.naturalWidth){const tileW=1250,offset=(camera*.14)%tileW;for(let i=-1;i<3;i++)ctx.drawImage(parkArt,i*tileW-offset,0,tileW,430)}
- if(fountainArt.complete&&fountainArt.naturalWidth){const offset=(camera*.30)%1450;for(let i=-1;i<3;i++)ctx.drawImage(fountainArt,i*1450-offset,165,690,305)}
+ if(fountainArt.complete&&fountainArt.naturalWidth){const offset=(camera*.26)%1600;for(let i=-1;i<3;i++){ctx.save();ctx.globalAlpha=.68;ctx.drawImage(fountainArt,i*1600-offset,110,920,350);ctx.restore()}}
  const fade=ctx.createLinearGradient(0,340,0,500);fade.addColorStop(0,'#ffffff00');fade.addColorStop(1,'#193a3530');ctx.fillStyle=fade;ctx.fillRect(0,340,W,160);
 }
 function tree(x,base,scale=1){ctx.save();ctx.translate(x,base);ctx.scale(scale,scale);rounded(-10,-132,20,140,7,'#7e5848');line([[0,-83],[-32,-117]],'#7e5848',9);line([[0,-100],[31,-137]],'#7e5848',8);for(const [dx,dy,r,c] of [[-39,-137,43,'#448d69'],[12,-160,52,'#4f9e70'],[55,-128,38,'#448d69'],[-7,-114,42,'#66b77c'],[27,-174,31,'#79c98a']])circle(dx,dy,r,c);ctx.restore()}
@@ -61,8 +62,9 @@ function lamppost(x){rounded(x-4,302,8,161,3,'#324d5a');circle(x,300,14,'#334a55
 function bench(x,y){rounded(x,y-36,80,10,3,'#b77d53');rounded(x,y-22,80,10,3,'#b77d53');rounded(x+5,y-10,70,9,2,'#c58b58');rounded(x+13,y-2,5,17,1,'#4a5c62');rounded(x+63,y-2,5,17,1,'#4a5c62')}
 function fountain(x){rounded(x-85,420,170,28,8,'#819fab');rounded(x-68,405,136,21,7,'#b7d3d7');circle(x,396,29,'#c2eaf0');rounded(x-9,349,18,61,7,'#8aadb9');circle(x,345,12,'#c4e4e4');for(let i=-2;i<=2;i++){const dx=i*23;line([[x,348],[x+dx,330-Math.abs(i)*6],[x+dx*1.6,400]],'#7ad8ef',3)}}
 function scenery(){ctx.save();ctx.translate(-camera,0);
- for(let x=100;x<WORLD;x+=670){tree(x,GROUND,1.2);lamppost(x+205);bench(x+315,GROUND)}
- fountain(1150);fountain(2840);
+ // The approved illustrations already contain trees, lamps and fountains.
+ // Avoid placing crude geometric duplicates over them.
+ for(let x=210;x<WORLD;x+=670){if(benchArt.complete&&benchArt.naturalWidth)ctx.drawImage(benchArt,x,GROUND-112,132,98);}
  rounded(1895,365,14,100,2,'#516e74');rounded(1875,348,54,28,5,'#f6d58a');ctx.fillStyle='#425b66';ctx.font='bold 12px system-ui';ctx.fillText('SPARA',1881,367);
  rounded(3770,350,90,105,10,'#547f8e');rounded(3782,363,66,79,7,'#e9cb8d');rounded(3793,375,44,60,5,'#496f85');ctx.fillStyle='#fff';ctx.font='bold 12px system-ui';ctx.fillText('SKOLAN',3785,343);ctx.restore()}
 function drawPlatforms(){ctx.save();ctx.translate(-camera,0);
@@ -96,12 +98,12 @@ function hero(){
  if(p.ground){ctx.fillStyle='#173d4640';ctx.beginPath();ctx.ellipse(0,1,20,4,0,0,Math.PI*2);ctx.fill()}
  if(p.inv>0&&Math.floor(tick/4)%2)ctx.globalAlpha=.55;
  if(im&&im.complete&&im.naturalWidth){
-   const height=pose==='crouch'?46:pose.startsWith('roll')?48:pose.startsWith('slash')?73:pose==='hurt'?67:68;
-   const width=Math.min(pose.startsWith('slash')?93:pose.startsWith('roll')?74:65,height*im.naturalWidth/im.naturalHeight);
+   const height=pose==='crouch'?46:pose.startsWith('roll')?50:pose.startsWith('slash')?69:pose==='hurt'?66:68;
+   const width=Math.min(pose.startsWith('slash')?96:pose.startsWith('roll')?77:65,height*im.naturalWidth/im.naturalHeight);
    const bounce=p.ground&&!p.crouch&&Math.abs(p.vx)>1&&!p.roll?Math.abs(Math.sin(tick*.22))*2:0;
    ctx.drawImage(im,-width/2,-height-bounce,width,height);
  }else{rounded(-14,-57,28,57,7,'#f7f0e5');circle(0,-63,15,'#f7c454')}
- if(p.attack>0){ctx.strokeStyle='#b8f2ff';ctx.lineWidth=4;ctx.beginPath();ctx.arc(7,-34,49,-1.15,.65);ctx.stroke()}
+ if(p.attack>0){ctx.save();ctx.globalAlpha=.72;ctx.strokeStyle='#b8f2ff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(7,-34,49,-1.15,.65);ctx.stroke();ctx.restore()}
  ctx.restore();
 }
 function effects(){for(const q of particles){ctx.globalAlpha=Math.min(1,q.life/15);circle(q.x-camera,q.y,3,q.color)}ctx.globalAlpha=1}
@@ -129,6 +131,6 @@ function minimap(){
  ctx.fillStyle='#d2e9e5';ctx.font='11px system-ui';ctx.fillText('● Du',innerX, y+91);ctx.fillText('◆ Kontrollpunkt',innerX+65,y+91);
  ctx.restore();
 }
-function render(){background();drawPlatforms();drawItems();drawEnemies();hero();effects();hud();minimap();ctx.fillStyle='#0e263cbb';ctx.fillRect(W-215,H-30,215,30);ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText(`Stadsparken · v${VERSION}`,W-195,H-11)}
+function render(){background();drawPlatforms();scenery();drawItems();drawEnemies();hero();effects();hud();minimap();ctx.fillStyle='#0e263cbb';ctx.fillRect(W-215,H-30,215,30);ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText(`Stadsparken · v${VERSION}`,W-195,H-11)}
 function loop(t){const dt=Math.min(2,(t-last)/16.666||1);last=t;if(running&&!paused)update(dt);render();requestAnimationFrame(loop)}
 reset(false);try{if(localStorage.getItem('stadsparken-checkpoint')==='1930'){checkpoint=1930;player.x=1930}}catch{}requestAnimationFrame(loop);

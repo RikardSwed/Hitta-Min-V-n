@@ -1,6 +1,6 @@
 # AI-överlämning – Stadens Hemlighet
 
-## Aktuell version: v0.6.0
+## Aktuell version: v0.7.0
 Denna ZIP är källan till sanningen. Projektet är en statisk webapp för GitHub Pages, med index.html, css/style.css och js/game.js. Inga externa bibliotek krävs.
 
 ## Fastslagen vision
@@ -23,3 +23,6 @@ Pilar/A-D rörelse, mellanslag/W/upp hopp, ner/S ducka, J/X svärd, K/C volt, P/
 
 ## v0.6.0 (aktuellt)
 Minikarta uppe till höger visar spelarposition, upptäckta sektioner, markavbrott och kontrollpunkt. Kapselräknare flyttad. Omstart vid 0 energi sker först när spelaren väljer att fortsätta. Fortsatt arbete: skapa äkta konsekventa animationer och sammanhängande illustrerade tiles; konceptark är inte färdiga sprites. Inga nya banor innan Stadsparken fungerar visuellt.
+
+## v0.7.0
+Rensade karaktärsutskärningar från konceptark, bevarade original under assets/source-poses, illustrerad bänk och mindre geometrisk överritning. Behåll originalstilen. Fortfarande behövs helt nya konsekventa animationer och miljötiles.

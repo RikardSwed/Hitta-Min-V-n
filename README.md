@@ -1,12 +1,19 @@
-# Stadens Hemlighet – Stadsparken v0.6.0
+# Stadens Hemlighet – Stadsparken v0.7.0
 
-Statisk HTML5 Canvas-plattformare för GitHub Pages. Öppna `index.html` eller publicera filerna med bibehållen mappstruktur (`css/`, `js/`, `assets/`, `docs/`).
+Statisk HTML/CSS/JavaScript-webapp för GitHub Pages. Öppna `index.html` via en lokal webbserver eller publicera med GitHub Pages.
 
-**Kontroller:** A/D eller pilar för rörelse, mellanslag/W/upp för hopp, S/ner för duckning, J/X för svärd, K/C för framåtvolt, P/Esc för paus.
+## Nytt i v0.7.0
+- Rensade utsnitt ur godkända konceptbilder för de 13 befintliga karaktärsposerna; källbilderna sparas under `assets/source-poses/`.
+- Enhetligare ritstorlekar för pojken och mindre påträngande svärdseffekt.
+- Illustrerade parkbänkar i stället för enkla ritade bänkar.
+- Färre enkla Canvas-former ovanpå de godkända parkillustrationerna.
+- Minikarta och spelmekanik från v0.6.0 bevaras.
 
-**Nytt i v0.5:** mer konsekvent figurstorlek, förbättrade hoppkontroller, justerad animationstiming, markskugga och rättad återstart. Inga nya handritade bildrutor har tillkommit. Fullständig visuell webbläsartestning återstår.
+## Begränsningar
+De godkända bilderna är konceptark, inte kompletta animationssprites. Därför är detta fortfarande en mellanversion, inte en exakt reproduktion av referensbilden. Ett komplett nytt konsekvent spritesheet och separata sömlösa bakgrundslager återstår. Webbläsartest är inte genomfört.
 
-Se `docs/AI_CONTEXT.md` för att fortsätta projektet i en ny konversation.
+## Kontroller
+Pilar/A-D: rörelse · Mellanslag/W/upp: hoppa · J/X: svärd · ned/S: ducka · K/C: volt · P/Esc: pausa.
 
-## Nytt i v0.6.0
-Minikarta uppe till höger, tydligare HUD och rättad omstart vid 0 energi. Detta är en mindre funktionsuppdatering; grafiken är ännu inte slutgiltig.
+## Publicering
+Ladda upp hela ZIP-filens innehåll till repository-roten med bibehållna mappar. `index.html` pekar på `css/style.css` och `js/game.js`.
