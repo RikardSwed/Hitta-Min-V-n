@@ -1,9 +1,9 @@
-# Stadens Hemlighet – Stadsparken v0.4.0
+# Stadens Hemlighet – Stadsparken v0.5.0
 
-Spelbar HTML5/JavaScript-prototyp för GitHub Pages. Ladda upp alla filer och mappar med bibehållen struktur. Öppna index.html via GitHub Pages.
+Statisk HTML5 Canvas-plattformare för GitHub Pages. Öppna `index.html` eller publicera filerna med bibehållen mappstruktur (`css/`, `js/`, `assets/`, `docs/`).
 
-Kontroller: A/D eller piltangenter = gå, W/upp/mellanslag = hoppa, J/X = svärd, S/ned = ducka, K/C = framåtvolt, P/Esc = paus. Maxenergi 99.
+**Kontroller:** A/D eller pilar för rörelse, mellanslag/W/upp för hopp, S/ner för duckning, J/X för svärd, K/C för framåtvolt, P/Esc för paus.
 
-Grafiken i `assets/characters` och `assets/backgrounds/approved-*` har utvunnits från de godkända ursprungliga konceptarken. Animationerna är en första implementering med separata bilder; ännu inte slutgiltigt renritade spelassets.
+**Nytt i v0.5:** mer konsekvent figurstorlek, förbättrade hoppkontroller, justerad animationstiming, markskugga och rättad återstart. Inga nya handritade bildrutor har tillkommit. Fullständig visuell webbläsartestning återstår.
 
-Se `docs/AI_CONTEXT.md` för att återuppta projektet. GitHub-commit finns i `COMMIT_MESSAGE.txt`.
+Se `docs/AI_CONTEXT.md` för att fortsätta projektet i en ny konversation.

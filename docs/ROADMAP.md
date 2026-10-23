@@ -1,10 +1,14 @@
-# Roadmap
+# Utvecklingsplan
 
-- [x] Spelbar stadspark med 99 energi, svärd och framåtvolt
-- [x] CSS i css-mapp och versionsnummer i sidfot
-- [x] v0.4: utklippta sprites för huvudrörelser ur godkänt konceptark
-- [x] v0.4: parkbakgrund från godkända konceptark
-- [ ] Visuell webbläsargranskning och speltest av v0.4
-- [ ] Förbättra spritekanter och justera storlek för alla animationer
-- [ ] Skapa fullständig handritad tilemap med plattformar och detaljer i samma stil
-- [ ] Fler banor och originalmusik
+## Klart
+- v0.1 spelbar Stadspark
+- v0.4 konceptbaserade figurbilder och parkbakgrunder
+- v0.5 mer enhetlig spritevisning, förbättrad hoppkontroll och återstart
+
+## Näst på tur
+- Testa v0.5 i webbläsare och samla in feedback
+- Riktiga handritade animationsrutor med gemensamma proportioner och konsekvent figur
+- Riktiga illustrerade tile-set, fontän, träd och bänkar i godkänd stil
+- Förfina kollisionsboxar och animationstiming efter speltest
+- Musik och ljudeffekter
+- Nya områden först när Stadsparken fungerar och ser bra ut
