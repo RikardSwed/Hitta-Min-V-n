@@ -9,3 +9,6 @@
 - Kontrollpunkt i localStorage med nyckeln stadsparken-checkpoint. Omstart-knappen nollställer banan.
 - Inga externa beroenden, statiska relativa resurssökvägar. Kan publiceras på GitHub Pages.
 - Kontroll: node --check js/game.js; zipfile test. Fullständigt webbläsarspeltest återstår.
+
+## Minikarta v0.6.0
+`minimap()` i `js/game.js` ritar en schematisk översikt av hela WORLD (3900 px) i Canvas. `visitedSections` spårar upptäckta tolfte-delar under aktuell spelsession. Detta är inte en separat HTML-widget och kräver inga externa bibliotek.

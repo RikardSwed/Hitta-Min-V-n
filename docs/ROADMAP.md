@@ -1,14 +1,11 @@
 # Utvecklingsplan
 
-## Klart
-- v0.1 spelbar Stadspark
-- v0.4 konceptbaserade figurbilder och parkbakgrunder
-- v0.5 mer enhetlig spritevisning, förbättrad hoppkontroll och återstart
+## Klart i v0.6.0
+- Minikarta uppe till höger med spelarposition och upptäckta delar.
+- Flyttad kapselräknare och justerad omstart.
 
-## Näst på tur
-- Testa v0.5 i webbläsare och samla in feedback
-- Riktiga handritade animationsrutor med gemensamma proportioner och konsekvent figur
-- Riktiga illustrerade tile-set, fontän, träd och bänkar i godkänd stil
-- Förfina kollisionsboxar och animationstiming efter speltest
-- Musik och ljudeffekter
-- Nya områden först när Stadsparken fungerar och ser bra ut
+## Nästa steg
+1. Ta emot spelarens testfeedback på v0.5.0 och v0.6.0.
+2. Skapa sammanhängande handritade sprites med konsekvent figurdesign och bildrutor.
+3. Skapa illustrerade parktiles och objekt i godkänd stil.
+4. Webbläsartesta rörelser, kollisionskanter och grafisk läsbarhet.
