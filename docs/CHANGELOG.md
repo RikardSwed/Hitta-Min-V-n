@@ -14,3 +14,10 @@
 - Renare utsnitt för 13 poser, originalfiler arkiverade.
 - Illustrerad parkbänk, minskad överritning, mindre svärdeffekt.
 - Bevarad minikarta och mekanik från v0.6.0.
+
+
+## v0.8.0 – konsekventa animationer
+- 50 nya, transparenta PNG-rutor i 9 animationslägen, ritade som en konsekvent riggad 2D-figur med samma proportioner och baslinje.
+- Förstorad figur på skärmen, tydlig fotsättning och förbättrad bildrutestyrning.
+- De äldre originalutklippen finns kvar som referenser men används inte i spelrenderingen.
+- Detta är en stiliserad animationsgrund, inte ännu den slutliga detaljrikedomen från konceptillustrationerna.

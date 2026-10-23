@@ -1,1 +1,1 @@
-feat: v0.7.0 - rensa karaktärssprites och förbättra illustrerad parkmiljö
+feat: v0.8.0 - nya sammanhängande animationer och större huvudperson

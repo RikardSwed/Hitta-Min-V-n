@@ -1,6 +1,16 @@
 
 // Original concept-art assets are bundled locally; the game works offline.
 const sprites={};for(const name of ['idle','walk1','walk2','run1','run2','jump','fall','crouch','slash1','slash2','roll1','roll2','hurt']){const img=new Image();img.src=`assets/characters/${name}.png`;sprites[name]=img;}
+
+// Consistent hand-assembled animation frames: same 160x180 canvas, common foot baseline.
+const animationLengths={idle:6,walk:8,run:8,jump:4,fall:3,crouch:3,slash:7,roll:8,hurt:3};
+const animations={};
+for(const [name,count] of Object.entries(animationLengths)){
+ animations[name]=Array.from({length:count},(_,i)=>{
+  const image=new Image();image.src=`assets/characters/animated/${name}_${String(i).padStart(2,'0')}.png`;return image;
+ });
+}
+
 const parkArt=new Image();parkArt.src='assets/backgrounds/approved-park.png';
 const fountainArt=new Image();fountainArt.src='assets/backgrounds/approved-fountain.png';
 const stoneArt=new Image();stoneArt.src='assets/tiles/stone-bridge.png';
@@ -11,7 +21,7 @@ const W=960,H=540,WORLD=3900,GROUND=462;
 const overlay=document.querySelector('#overlay'),overlayTitle=document.querySelector('#overlayTitle'),overlayText=document.querySelector('#overlayText');
 let running=false,paused=false,won=false,camera=0,tick=0,sound=true,last=0,checkpoint=80,score=0,particles=[];
 let coyote=0,jumpBuffer=0,heroPose="idle",heroPoseTime=0;
-const VERSION='0.7.0';
+const VERSION='0.8.0';
 let visitedSections=new Set();
 const keys=new Set(),pressed=new Set();
 const platforms=[{x:0,y:GROUND,w:670,h:90},{x:735,y:GROUND,w:690,h:90},{x:1500,y:GROUND,w:670,h:90},{x:2250,y:GROUND,w:700,h:90},{x:3040,y:GROUND,w:860,h:90},
@@ -80,30 +90,31 @@ function drawPlatforms(){ctx.save();ctx.translate(-camera,0);
  }ctx.restore()}
 function drawItems(){ctx.save();ctx.translate(-camera,0);for(const item of items){if(item.taken)continue;const y=item.y+Math.sin(tick*.075+item.id)*5;circle(item.x,y,18,'#ffde7999');circle(item.x,y,12,'#ffe17c');circle(item.x,y,7,'#fff9df');line([[item.x-4,y],[item.x+4,y]],'#dba54c',2);line([[item.x,y-4],[item.x,y+4]],'#dba54c',2)}ctx.restore()}
 function drawEnemies(){ctx.save();ctx.translate(-camera,0);for(const e of enemies){if(!e.alive)continue;ctx.save();ctx.translate(e.x,e.y+Math.sin(tick*.09+e.id)*2);rounded(1,9,36,20,10,'#526c87');rounded(6,3,27,22,10,'#8db9c0');rounded(10,10,19,10,5,'#273f5d');circle(15,15,3,'#ffdf8e');circle(25,15,3,'#ffdf8e');circle(8,29,6,'#45566d');circle(31,29,6,'#45566d');ctx.restore()}ctx.restore()}
-// All poses share a consistent visual baseline. The original concept cutouts have
-// different proportions, so normalization prevents the hero from changing size.
+// Animation state uses time-based frames and anchors all poses to the player's feet.
 function hero(){
- const p=player,x=p.x-camera+p.w/2,y=p.y+p.h;
- let pose='idle';
- if(p.inv>0&&Math.floor(tick/5)%2)pose='hurt';
- else if(p.attack>0)pose=p.attack>6?'slash1':'slash2';
- else if(p.roll>0)pose=Math.floor(tick/5)%2?'roll1':'roll2';
- else if(p.crouch)pose='crouch';
- else if(!p.ground)pose=p.vy<0?'jump':'fall';
- else if(Math.abs(p.vx)>2.4)pose=Math.floor(tick/7)%2?'run1':'run2';
- else if(Math.abs(p.vx)>.3)pose=Math.floor(tick/9)%2?'walk1':'walk2';
- if(pose!==heroPose){heroPose=pose;heroPoseTime=0}else heroPoseTime++;
- const im=sprites[pose];ctx.save();ctx.translate(x,y);ctx.scale(p.face,1);
- // Grounding shadow helps the player judge jumps and landings.
- if(p.ground){ctx.fillStyle='#173d4640';ctx.beginPath();ctx.ellipse(0,1,20,4,0,0,Math.PI*2);ctx.fill()}
- if(p.inv>0&&Math.floor(tick/4)%2)ctx.globalAlpha=.55;
- if(im&&im.complete&&im.naturalWidth){
-   const height=pose==='crouch'?46:pose.startsWith('roll')?50:pose.startsWith('slash')?69:pose==='hurt'?66:68;
-   const width=Math.min(pose.startsWith('slash')?96:pose.startsWith('roll')?77:65,height*im.naturalWidth/im.naturalHeight);
-   const bounce=p.ground&&!p.crouch&&Math.abs(p.vx)>1&&!p.roll?Math.abs(Math.sin(tick*.22))*2:0;
-   ctx.drawImage(im,-width/2,-height-bounce,width,height);
- }else{rounded(-14,-57,28,57,7,'#f7f0e5');circle(0,-63,15,'#f7c454')}
- if(p.attack>0){ctx.save();ctx.globalAlpha=.72;ctx.strokeStyle='#b8f2ff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(7,-34,49,-1.15,.65);ctx.stroke();ctx.restore()}
+ const p=player, x=p.x-camera+p.w/2, footY=p.y+p.h;
+ let action='idle';
+ if(p.inv>0&&Math.floor(tick/6)%2)action='hurt';
+ else if(p.roll>0)action='roll';
+ else if(p.attack>0)action='slash';
+ else if(p.crouch)action='crouch';
+ else if(!p.ground)action=p.vy<0?'jump':'fall';
+ else if(Math.abs(p.vx)>2.4)action='run';
+ else if(Math.abs(p.vx)>.3)action='walk';
+ if(action!==heroPose){heroPose=action;heroPoseTime=0}else heroPoseTime++;
+ const frames=animations[action],fps=action==='run'?5:action==='walk'?7:action==='slash'?2.2:action==='roll'?2.8:action==='idle'?12:5;
+ const idx=action==='slash'?Math.min(frames.length-1,Math.floor((13-p.attack)/2)):
+  action==='roll'?Math.min(frames.length-1,Math.floor((23-p.roll)/3)):
+  Math.floor(heroPoseTime/fps)%frames.length;
+ const img=frames[Math.max(0,idx)];
+ ctx.save();ctx.translate(x,footY);ctx.scale(p.face,1);
+ if(p.ground){ctx.fillStyle='#173d4640';ctx.beginPath();ctx.ellipse(0,2,25,5,0,0,Math.PI*2);ctx.fill()}
+ if(p.inv>0&&Math.floor(tick/4)%2)ctx.globalAlpha=.58;
+ // Sprite's original foot line is y=166/180; displayed 126px tall, feet on collision floor.
+ const drawH=126,drawW=112,footRatio=166/180;
+ if(img&&img.complete&&img.naturalWidth){ctx.drawImage(img,-drawW/2,-drawH*footRatio,drawW,drawH)}
+ else{rounded(-20,-100,40,100,8,'#f4f0e7');circle(0,-110,19,'#f7c65a')}
+ if(p.attack>0){ctx.save();ctx.globalAlpha=.65;ctx.strokeStyle='#b8f2ff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(16,-58,62,-1.15,.55);ctx.stroke();ctx.restore()}
  ctx.restore();
 }
 function effects(){for(const q of particles){ctx.globalAlpha=Math.min(1,q.life/15);circle(q.x-camera,q.y,3,q.color)}ctx.globalAlpha=1}

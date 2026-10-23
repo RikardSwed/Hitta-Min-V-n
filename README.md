@@ -1,8 +1,8 @@
-# Stadens Hemlighet – Stadsparken v0.7.0
+# Stadens Hemlighet – Stadsparken v0.8.0
 
 Statisk HTML/CSS/JavaScript-webapp för GitHub Pages. Öppna `index.html` via en lokal webbserver eller publicera med GitHub Pages.
 
-## Nytt i v0.7.0
+## Nytt i v0.8.0
 - Rensade utsnitt ur godkända konceptbilder för de 13 befintliga karaktärsposerna; källbilderna sparas under `assets/source-poses/`.
 - Enhetligare ritstorlekar för pojken och mindre påträngande svärdseffekt.
 - Illustrerade parkbänkar i stället för enkla ritade bänkar.
@@ -17,3 +17,7 @@ Pilar/A-D: rörelse · Mellanslag/W/upp: hoppa · J/X: svärd · ned/S: ducka ·
 
 ## Publicering
 Ladda upp hela ZIP-filens innehåll till repository-roten med bibehållna mappar. `index.html` pekar på `css/style.css` och `js/game.js`.
+
+
+### v0.8.0
+Nya konsekventa spriteanimationer (50 bildrutor, 9 rörelser) i `assets/characters/animated/`. Den synliga figuren har förstorats och står på en gemensam fotlinje. Behåll hela mappstrukturen vid GitHub-uppladdning.
