@@ -1,1 +1,1 @@
-feat: v0.9.0 - återställ godkänd karaktärsdesign och jämna ut spritepositioner
+feat: v0.11.0 - ny riggad skolpojke, sammanhängande park och illustrerade miljödelar
