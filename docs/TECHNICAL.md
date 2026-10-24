@@ -13,5 +13,5 @@
 ## Minikarta v0.6.0
 `minimap()` i `js/game.js` ritar en schematisk översikt av hela WORLD (3900 px) i Canvas. `visitedSections` spårar upptäckta tolfte-delar under aktuell spelsession. Detta är inte en separat HTML-widget och kräver inga externa bibliotek.
 
-## v0.8.0
+## v0.9.0
 Källposer sparas under `assets/source-poses/`; spelet laddar bearbetade poser från `assets/characters/`. Minikarta i `js/game.js`.

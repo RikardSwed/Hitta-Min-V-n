@@ -21,3 +21,10 @@
 - Förstorad figur på skärmen, tydlig fotsättning och förbättrad bildrutestyrning.
 - De äldre originalutklippen finns kvar som referenser men används inte i spelrenderingen.
 - Detta är en stiliserad animationsgrund, inte ännu den slutliga detaljrikedomen från konceptillustrationerna.
+
+
+## v0.9.0 – återgång till godkänd huvudperson
+- Bytte ut v0.8:s förenklade vektorfigur mot bildrutor byggda från den godkända konceptfigurens ursprungliga PNG-bilder.
+- Gemensamt 240×300-format och fotankare för samtliga 50 bildrutor.
+- Förstorad figur och uppdaterat versionsnummer.
+- Begränsning: gång och löpning bygger på rörelsejusteringar av en fullständig pose; de är inte ännu nyritade individuella steg. Vissa ursprungliga attack-/voltutklipp är ofullständiga.

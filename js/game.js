@@ -2,7 +2,7 @@
 // Original concept-art assets are bundled locally; the game works offline.
 const sprites={};for(const name of ['idle','walk1','walk2','run1','run2','jump','fall','crouch','slash1','slash2','roll1','roll2','hurt']){const img=new Image();img.src=`assets/characters/${name}.png`;sprites[name]=img;}
 
-// Consistent hand-assembled animation frames: same 160x180 canvas, common foot baseline.
+// Consistent hand-assembled animation frames: same 240x300 canvas, common foot baseline.
 const animationLengths={idle:6,walk:8,run:8,jump:4,fall:3,crouch:3,slash:7,roll:8,hurt:3};
 const animations={};
 for(const [name,count] of Object.entries(animationLengths)){
@@ -21,7 +21,7 @@ const W=960,H=540,WORLD=3900,GROUND=462;
 const overlay=document.querySelector('#overlay'),overlayTitle=document.querySelector('#overlayTitle'),overlayText=document.querySelector('#overlayText');
 let running=false,paused=false,won=false,camera=0,tick=0,sound=true,last=0,checkpoint=80,score=0,particles=[];
 let coyote=0,jumpBuffer=0,heroPose="idle",heroPoseTime=0;
-const VERSION='0.8.0';
+const VERSION='0.9.0';
 let visitedSections=new Set();
 const keys=new Set(),pressed=new Set();
 const platforms=[{x:0,y:GROUND,w:670,h:90},{x:735,y:GROUND,w:690,h:90},{x:1500,y:GROUND,w:670,h:90},{x:2250,y:GROUND,w:700,h:90},{x:3040,y:GROUND,w:860,h:90},
@@ -110,8 +110,8 @@ function hero(){
  ctx.save();ctx.translate(x,footY);ctx.scale(p.face,1);
  if(p.ground){ctx.fillStyle='#173d4640';ctx.beginPath();ctx.ellipse(0,2,25,5,0,0,Math.PI*2);ctx.fill()}
  if(p.inv>0&&Math.floor(tick/4)%2)ctx.globalAlpha=.58;
- // Sprite's original foot line is y=166/180; displayed 126px tall, feet on collision floor.
- const drawH=126,drawW=112,footRatio=166/180;
+ // Concept-art frames use y=278/300 as a common baseline; consistent grounding.
+ const drawH=145,drawW=116,footRatio=278/300;
  if(img&&img.complete&&img.naturalWidth){ctx.drawImage(img,-drawW/2,-drawH*footRatio,drawW,drawH)}
  else{rounded(-20,-100,40,100,8,'#f4f0e7');circle(0,-110,19,'#f7c65a')}
  if(p.attack>0){ctx.save();ctx.globalAlpha=.65;ctx.strokeStyle='#b8f2ff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(16,-58,62,-1.15,.55);ctx.stroke();ctx.restore()}

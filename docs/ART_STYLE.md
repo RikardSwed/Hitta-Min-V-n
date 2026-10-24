@@ -4,5 +4,5 @@ Den ursprungligen godkända skolpojken: blond tonåring, vit huvtröja med röd 
 
 Nuvarande v0.5 använder klippta konceptbilder. De har olika proportioner och saknar sammanhängande fullständiga animationscykler. Kodnormalisering hjälper bara delvis. Framtida grafik bör bestå av riktiga transparenta sprites med konsekvent skala, gemensam fotlinje och tydliga animationsrutor samt matchande tile-set och bakgrundslager.
 
-## Referens v0.8.0
+## Referens v0.9.0
 Behåll ursprungligen godkänd vit/röd skoltröja och ljus handritad stadspark. Använd aldrig orelaterade webbilder som referens.
