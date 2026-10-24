@@ -1,27 +1,33 @@
 
-// Original concept-art assets are bundled locally; the game works offline.
-const sprites={};for(const name of ['idle','walk1','walk2','run1','run2','jump','fall','crouch','slash1','slash2','roll1','roll2','hurt']){const img=new Image();img.src=`assets/characters/${name}.png`;sprites[name]=img;}
+// All resources are local; the site works on static GitHub Pages.
+const cache='?v=0.11.0';
 
-// Consistent hand-assembled animation frames: same 240x300 canvas, common foot baseline.
-const animationLengths={idle:6,walk:8,run:8,jump:4,fall:3,crouch:3,slash:7,roll:8,hurt:3};
+// 65 articulated frames derived from the approved full-body schoolboy artwork.
+const animationLengths={idle:8,walk:10,run:10,jump:6,fall:5,crouch:4,slash:8,roll:10,hurt:4};
 const animations={};
 for(const [name,count] of Object.entries(animationLengths)){
  animations[name]=Array.from({length:count},(_,i)=>{
-  const image=new Image();image.src=`assets/characters/animated/${name}_${String(i).padStart(2,'0')}.png`;return image;
+  const image=new Image();image.src=`assets/characters/animated/${name}_${String(i).padStart(2,'0')}.png${cache}`;return image;
  });
 }
 
-const parkArt=new Image();parkArt.src='assets/backgrounds/approved-park.png';
-const fountainArt=new Image();fountainArt.src='assets/backgrounds/approved-fountain.png';
-const stoneArt=new Image();stoneArt.src='assets/tiles/stone-bridge.png';
-const mossArt=new Image();mossArt.src='assets/tiles/mossy-stone.png';
-const benchArt=new Image();benchArt.src='assets/backgrounds/illustrated-bench.png';
+const panorama=new Image();panorama.src='assets/backgrounds/approved-park-panorama.jpg'+cache;
+const portrait=new Image();portrait.src='assets/characters/animated/idle_00.png'+cache;
+const artwork={};
+for(const [key,filename] of Object.entries({
+  wall:'mossy-wall.png',ledge:'grass-ledge.png',lamp:'park-lamp.png',flowers:'flowers.png',
+  bench:'../backgrounds/illustrated-bench.png',banner:'park-banner.png',
+  save:'checkpoint.png',school:'school-gate.png',enemy:'friendly-blob.png'
+})){
+ const img=new Image();img.src='assets/decor/'+filename+cache;artwork[key]=img;
+}
+function ready(img){return img&&img.complete&&img.naturalWidth>0}
 const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d');
 const W=960,H=540,WORLD=3900,GROUND=462;
 const overlay=document.querySelector('#overlay'),overlayTitle=document.querySelector('#overlayTitle'),overlayText=document.querySelector('#overlayText');
 let running=false,paused=false,won=false,camera=0,tick=0,sound=true,last=0,checkpoint=80,score=0,particles=[];
 let coyote=0,jumpBuffer=0,heroPose="idle",heroPoseTime=0;
-const VERSION='0.9.0';
+const VERSION='0.11.0';
 let visitedSections=new Set();
 const keys=new Set(),pressed=new Set();
 const platforms=[{x:0,y:GROUND,w:670,h:90},{x:735,y:GROUND,w:690,h:90},{x:1500,y:GROUND,w:670,h:90},{x:2250,y:GROUND,w:700,h:90},{x:3040,y:GROUND,w:860,h:90},
@@ -47,7 +53,7 @@ if(jumpBuffer>0&&coyote>0&&!p.crouch&&!p.roll){p.vy=-13.7;p.ground=false;coyote=
 if(!held('Space','KeyW','ArrowUp')&&p.vy< -4)p.vy+=.52*dt;
 if(tap('KeyJ','KeyX')&&!p.attackCD&&!p.roll&&!p.crouch){p.attack=13;p.attackCD=22;beep(720,.09,'triangle')}
 if(tap('KeyK','KeyC')&&!p.rollCD&&p.ground){p.roll=23;p.rollCD=43;p.face=dir||p.face;p.vx=p.face*9.5;beep(390,.16)}
-if(p.roll)p.vx=p.face*9.5;else p.vx+=(dir*(p.crouch?1.4:4.1)-p.vx)*Math.min(1,.22*dt);
+if(p.roll)p.vx=p.face*9.5;else p.vx+=(dir*(p.crouch?1.35:(held('ShiftLeft','ShiftRight')?5.8:3.6))-p.vx)*Math.min(1,.22*dt);
 const oldY=p.y;p.x=Math.max(0,Math.min(WORLD-p.w,p.x+p.vx*dt));p.vy=Math.min(17,p.vy+.66*dt);p.y+=p.vy*dt;p.ground=false;
 for(const plat of platforms){if(p.x+p.w>plat.x+5&&p.x<plat.x+plat.w-5&&oldY+p.h<=plat.y+8&&p.y+p.h>=plat.y&&p.vy>=0){p.y=plat.y-p.h;p.vy=0;p.ground=true}}
 if(p.y>H+100){p.hp=Math.max(0,p.hp-25);p.x=checkpoint;p.y=230;p.vx=0;p.vy=0;p.inv=75;if(p.hp<=0){running=false;show('Energin tog slut!','Försök igen från kontrollpunkten.','Försök igen →')}beep(180,.2)}
@@ -60,88 +66,157 @@ function rounded(x,y,w,h,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.roundR
 function line(points,color,width=2){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke()}
 function circle(x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
 function background(){
- const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#8bc8fa');sky.addColorStop(1,'#d9f0e2');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
- // Two different park illustrations from the exact concept sheets approved by the player.
- // They scroll more slowly than the platforms for depth.
- if(parkArt.complete&&parkArt.naturalWidth){const tileW=1250,offset=(camera*.14)%tileW;for(let i=-1;i<3;i++)ctx.drawImage(parkArt,i*tileW-offset,0,tileW,430)}
- if(fountainArt.complete&&fountainArt.naturalWidth){const offset=(camera*.26)%1600;for(let i=-1;i<3;i++){ctx.save();ctx.globalAlpha=.68;ctx.drawImage(fountainArt,i*1600-offset,110,920,350);ctx.restore()}}
- const fade=ctx.createLinearGradient(0,340,0,500);fade.addColorStop(0,'#ffffff00');fade.addColorStop(1,'#193a3530');ctx.fillStyle=fade;ctx.fillRect(0,340,W,160);
+  const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#a9d7fb');sky.addColorStop(1,'#e3f2e0');
+  ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+  // One continuous panorama constructed exclusively from the APPROVED park paintings.
+  // It does not endlessly stamp multiple transparent fountains onto each other.
+  if(ready(panorama)){
+    const viewX=Math.max(0,Math.min(panorama.naturalWidth-W,camera*.90));
+    ctx.drawImage(panorama,viewX,0,W,540,0,0,W,540);
+  }
+  const distant=ctx.createLinearGradient(0,310,0,540);
+  distant.addColorStop(0,'#ffffff00');distant.addColorStop(.65,'#e7f0d60b');distant.addColorStop(1,'#122c3240');
+  ctx.fillStyle=distant;ctx.fillRect(0,310,W,230);
 }
-function tree(x,base,scale=1){ctx.save();ctx.translate(x,base);ctx.scale(scale,scale);rounded(-10,-132,20,140,7,'#7e5848');line([[0,-83],[-32,-117]],'#7e5848',9);line([[0,-100],[31,-137]],'#7e5848',8);for(const [dx,dy,r,c] of [[-39,-137,43,'#448d69'],[12,-160,52,'#4f9e70'],[55,-128,38,'#448d69'],[-7,-114,42,'#66b77c'],[27,-174,31,'#79c98a']])circle(dx,dy,r,c);ctx.restore()}
-function lamppost(x){rounded(x-4,302,8,161,3,'#324d5a');circle(x,300,14,'#334a55');circle(x,299,10,'#ffdc8b');rounded(x-13,285,26,5,2,'#344a57')}
-function bench(x,y){rounded(x,y-36,80,10,3,'#b77d53');rounded(x,y-22,80,10,3,'#b77d53');rounded(x+5,y-10,70,9,2,'#c58b58');rounded(x+13,y-2,5,17,1,'#4a5c62');rounded(x+63,y-2,5,17,1,'#4a5c62')}
-function fountain(x){rounded(x-85,420,170,28,8,'#819fab');rounded(x-68,405,136,21,7,'#b7d3d7');circle(x,396,29,'#c2eaf0');rounded(x-9,349,18,61,7,'#8aadb9');circle(x,345,12,'#c4e4e4');for(let i=-2;i<=2;i++){const dx=i*23;line([[x,348],[x+dx,330-Math.abs(i)*6],[x+dx*1.6,400]],'#7ad8ef',3)}}
-function scenery(){ctx.save();ctx.translate(-camera,0);
- // The approved illustrations already contain trees, lamps and fountains.
- // Avoid placing crude geometric duplicates over them.
- for(let x=210;x<WORLD;x+=670){if(benchArt.complete&&benchArt.naturalWidth)ctx.drawImage(benchArt,x,GROUND-112,132,98);}
- rounded(1895,365,14,100,2,'#516e74');rounded(1875,348,54,28,5,'#f6d58a');ctx.fillStyle='#425b66';ctx.font='bold 12px system-ui';ctx.fillText('SPARA',1881,367);
- rounded(3770,350,90,105,10,'#547f8e');rounded(3782,363,66,79,7,'#e9cb8d');rounded(3793,375,44,60,5,'#496f85');ctx.fillStyle='#fff';ctx.font='bold 12px system-ui';ctx.fillText('SKOLAN',3785,343);ctx.restore()}
-function drawPlatforms(){ctx.save();ctx.translate(-camera,0);
+function drawWorldImage(name,x,y,w,h){
+ const img=artwork[name];if(ready(img)&&x+w>=camera-80&&x<camera+W+80)ctx.drawImage(img,x,y,w,h);
+}
+const flowerSpots=[35,530,1010,1550,2350,3110,3620];
+const lamps=[415,1140,2370,3360];
+const banners=[1350,2710];
+function scenery(){
+ ctx.save();ctx.translate(-camera,0);
+ for(const x of lamps)drawWorldImage('lamp',x,GROUND-193,77,193);
+ for(const x of banners)drawWorldImage('banner',x,GROUND-143,95,143);
+ for(const x of [170,1075,1740,2835,3500])drawWorldImage('bench',x,GROUND-69,105,73);
+ for(const x of flowerSpots)drawWorldImage('flowers',x,GROUND-42,120,43);
+ drawWorldImage('save',1871,GROUND-145,99,145);
+ drawWorldImage('school',3734,GROUND-154,160,154);
+ ctx.restore();
+}
+function drawPlatforms(){
+ ctx.save();ctx.translate(-camera,0);
  for(const p of platforms){
-   ctx.save();ctx.beginPath();ctx.rect(p.x,p.y,p.w,p.h);ctx.clip();
-   if(stoneArt.complete&&stoneArt.naturalWidth){for(let x=p.x;x<p.x+p.w;x+=220)ctx.drawImage(stoneArt,x,p.y-19,220,Math.max(145,p.h+36));}
-   else rounded(p.x,p.y,p.w,p.h,3,'#47575b');
-   ctx.fillStyle='#1d2f3a55';ctx.fillRect(p.x,p.y+16,p.w,p.h);
-   ctx.fillStyle='#334b4a';ctx.fillRect(p.x,p.y+10,p.w,8);
-   ctx.fillStyle='#74a84d';ctx.fillRect(p.x,p.y,p.w,10);
-   ctx.fillStyle='#a7d768';for(let x=p.x;x<p.x+p.w;x+=13){ctx.beginPath();ctx.ellipse(x,p.y+2,10,4,0,0,Math.PI*2);ctx.fill()}
-   ctx.restore();
- }ctx.restore()}
+  if(p.x>camera+W+50||p.x+p.w<camera-50)continue;
+  const ground=p.h>50;
+  const img=artwork[ground?'wall':'ledge'];
+  const thickness=ground?Math.max(145,p.h):51;
+  ctx.save();ctx.beginPath();ctx.rect(p.x,p.y,p.w,thickness);ctx.clip();
+  if(ready(img)){
+   const tileW=ground?256:256;
+   for(let x=p.x;x<p.x+p.w;x+=tileW){
+     ctx.drawImage(img,x,p.y,tileW,ground?144:58);
+     if(ground){for(let y=p.y+144;y<p.y+thickness;y+=144)ctx.drawImage(img,x,y,tileW,144)}
+   }
+  }else{rounded(p.x,p.y,p.w,thickness,3,'#405c58');}
+  // The entire collider surface stays at y=p.y, regardless of decorative overhang.
+  ctx.restore();
+ }
+ ctx.restore();
+}
 function drawItems(){ctx.save();ctx.translate(-camera,0);for(const item of items){if(item.taken)continue;const y=item.y+Math.sin(tick*.075+item.id)*5;circle(item.x,y,18,'#ffde7999');circle(item.x,y,12,'#ffe17c');circle(item.x,y,7,'#fff9df');line([[item.x-4,y],[item.x+4,y]],'#dba54c',2);line([[item.x,y-4],[item.x,y+4]],'#dba54c',2)}ctx.restore()}
-function drawEnemies(){ctx.save();ctx.translate(-camera,0);for(const e of enemies){if(!e.alive)continue;ctx.save();ctx.translate(e.x,e.y+Math.sin(tick*.09+e.id)*2);rounded(1,9,36,20,10,'#526c87');rounded(6,3,27,22,10,'#8db9c0');rounded(10,10,19,10,5,'#273f5d');circle(15,15,3,'#ffdf8e');circle(25,15,3,'#ffdf8e');circle(8,29,6,'#45566d');circle(31,29,6,'#45566d');ctx.restore()}ctx.restore()}
-// Animation state uses time-based frames and anchors all poses to the player's feet.
+function drawEnemies(){
+ ctx.save();ctx.translate(-camera,0);
+ for(const e of enemies){
+   if(!e.alive)continue;
+   const bob=Math.sin(tick*.085+e.id)*2;
+   ctx.save();ctx.translate(e.x+e.w/2,e.y+e.h+3+bob);
+   ctx.scale(1+Math.sin(tick*.085+e.id)*.035,1-Math.sin(tick*.085+e.id)*.05);
+   if(ready(artwork.enemy))ctx.drawImage(artwork.enemy,-29,-44,58,44);
+   else{circle(0,-18,19,'#84ca68');circle(-7,-17,3,'#2b4850');circle(7,-17,3,'#2b4850')}
+   ctx.restore();
+ }
+ ctx.restore();
+}
+// Precise foot-anchored 2D cutout animation. Physics collider remains independent of art.
 function hero(){
- const p=player, x=p.x-camera+p.w/2, footY=p.y+p.h;
+ const p=player,screenX=p.x-camera+p.w/2, footY=p.y+p.h;
  let action='idle';
  if(p.inv>0&&Math.floor(tick/6)%2)action='hurt';
  else if(p.roll>0)action='roll';
  else if(p.attack>0)action='slash';
  else if(p.crouch)action='crouch';
  else if(!p.ground)action=p.vy<0?'jump':'fall';
- else if(Math.abs(p.vx)>2.4)action='run';
- else if(Math.abs(p.vx)>.3)action='walk';
- if(action!==heroPose){heroPose=action;heroPoseTime=0}else heroPoseTime++;
- const frames=animations[action],fps=action==='run'?5:action==='walk'?7:action==='slash'?2.2:action==='roll'?2.8:action==='idle'?12:5;
- const idx=action==='slash'?Math.min(frames.length-1,Math.floor((13-p.attack)/2)):
-  action==='roll'?Math.min(frames.length-1,Math.floor((23-p.roll)/3)):
-  Math.floor(heroPoseTime/fps)%frames.length;
+ else if(Math.abs(p.vx)>4.25)action='run';
+ else if(Math.abs(p.vx)>.35)action='walk';
+ if(action!==heroPose){heroPose=action;heroPoseTime=0}
+ else heroPoseTime+= (action==='walk'||action==='run')?Math.max(.35,Math.abs(p.vx)/3.5):1;
+ const frames=animations[action];
+ const delay={idle:11,walk:5.5,run:4.2,jump:6,fall:6,crouch:8,slash:2,roll:2.25,hurt:5}[action];
+ const idx=(action==='slash')?Math.min(frames.length-1,Math.floor((13-p.attack)/(13/frames.length))):
+  (action==='roll')?Math.min(frames.length-1,Math.floor((23-p.roll)/(23/frames.length))):
+  Math.floor(heroPoseTime/delay)%frames.length;
  const img=frames[Math.max(0,idx)];
- ctx.save();ctx.translate(x,footY);ctx.scale(p.face,1);
- if(p.ground){ctx.fillStyle='#173d4640';ctx.beginPath();ctx.ellipse(0,2,25,5,0,0,Math.PI*2);ctx.fill()}
- if(p.inv>0&&Math.floor(tick/4)%2)ctx.globalAlpha=.58;
- // Concept-art frames use y=278/300 as a common baseline; consistent grounding.
- const drawH=145,drawW=116,footRatio=278/300;
- if(img&&img.complete&&img.naturalWidth){ctx.drawImage(img,-drawW/2,-drawH*footRatio,drawW,drawH)}
- else{rounded(-20,-100,40,100,8,'#f4f0e7');circle(0,-110,19,'#f7c65a')}
- if(p.attack>0){ctx.save();ctx.globalAlpha=.65;ctx.strokeStyle='#b8f2ff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(16,-58,62,-1.15,.55);ctx.stroke();ctx.restore()}
+ ctx.save();ctx.translate(screenX,footY);ctx.scale(p.face,1);
+ if(p.ground){ctx.fillStyle='#122b3340';ctx.beginPath();ctx.ellipse(0,1,30,5,0,0,Math.PI*2);ctx.fill()}
+ if(p.inv>0&&Math.floor(tick/4)%2)ctx.globalAlpha=.53;
+ const drawH=157,drawW=125,footRatio=278/300;
+ if(ready(img))ctx.drawImage(img,-drawW/2,-drawH*footRatio,drawW,drawH);
+ else{rounded(-17,-104,34,104,8,'#f5efe7');circle(0,-110,18,'#e9c05f')}
+ if(p.attack>0){
+   const progress=(13-p.attack)/13;
+   ctx.save();ctx.globalAlpha=.65*(1-progress);
+   ctx.strokeStyle='#d8f6ff';ctx.lineWidth=5;ctx.beginPath();
+   ctx.arc(20,-69,55,-1.65+progress*1.4,-.45+progress*1.4);ctx.stroke();ctx.restore();
+ }
  ctx.restore();
 }
 function effects(){for(const q of particles){ctx.globalAlpha=Math.min(1,q.life/15);circle(q.x-camera,q.y,3,q.color)}ctx.globalAlpha=1}
-function hud(){rounded(17,15,215,64,13,'#183951dc');ctx.fillStyle='#fff8e8';ctx.font='bold 13px system-ui';ctx.fillText('ENERGI',31,35);ctx.font='bold 28px system-ui';ctx.fillText(String(player.hp).padStart(2,'0'),31,67);rounded(94,48,121,13,6,'#2c4658');rounded(94,48,121*player.hp/99,13,6,player.hp>30?'#f6c86d':'#f1827b');ctx.font='bold 13px system-ui';ctx.fillStyle='#fff8e8';ctx.fillText('MAX 99',156,35);rounded(249,77,195,43,11,'#183951dc');ctx.font='bold 15px system-ui';ctx.fillText(`✦ ${score} / ${items.length} kapslar`,266,104);if(player.x<185){rounded(278,17,350,39,12,'#fdf2dccc');ctx.fillStyle='#284b61';ctx.font='bold 15px system-ui';ctx.fillText('→ Följ stigen genom parken!',306,42)}if(player.x>1850&&player.x<2050){rounded(340,84,295,40,12,'#fdf2dccc');ctx.fillStyle='#284b61';ctx.font='bold 15px system-ui';ctx.fillText('✓ Kontrollpunkt aktiverad!',366,109)}}
-function minimap(){
- // Compact overview of the entire park, not an unrelated decorative picture.
- const x=713,y=16,w=229,h=102,innerX=x+13,innerW=w-26,trackY=y+57;
- ctx.save();rounded(x,y,w,h,13,'#173a50e8');rounded(x+1,y+1,w-2,h-2,12,'#ffffff12');
- ctx.fillStyle='#fff4dc';ctx.font='bold 13px system-ui';ctx.fillText('STADSPARKEN  ·  KARTA',innerX,y+21);
- ctx.font='11px system-ui';ctx.fillStyle='#bde0e4';ctx.fillText('START',innerX,y+36);ctx.textAlign='right';ctx.fillText('SKOLAN',x+w-13,y+36);ctx.textAlign='left';
- rounded(innerX,trackY,innerW,17,5,'#0b2535');
- for(let i=0;i<12;i++){
-  const sx=innerX+i*innerW/12+1,sw=innerW/12-2;
-  rounded(sx,trackY+3,sw,11,2,visitedSections.has(i)?'#8fc9a2':'#416878');
- }
- // Gaps in the ground become darker interruptions on the miniature map.
- for(const [a,b] of [[670,735],[1425,1500],[2170,2250],[2950,3040]]){
-  const gx=innerX+a/WORLD*innerW,gw=(b-a)/WORLD*innerW;
-  ctx.fillStyle='#0b2535';ctx.fillRect(gx,trackY+8,Math.max(2,gw),6);
- }
- const cpX=innerX+1930/WORLD*innerW;
- ctx.fillStyle=checkpoint>80?'#ffe28e':'#a9b6bd';ctx.beginPath();ctx.moveTo(cpX,trackY-5);ctx.lineTo(cpX+5,trackY+1);ctx.lineTo(cpX,trackY+7);ctx.lineTo(cpX-5,trackY+1);ctx.fill();
- const px=innerX+Math.max(0,Math.min(WORLD,player.x))/WORLD*innerW;
- circle(px,trackY+8,6,'#fff8ed');circle(px,trackY+8,3.5,'#e47e67');
- ctx.fillStyle='#d2e9e5';ctx.font='11px system-ui';ctx.fillText('● Du',innerX, y+91);ctx.fillText('◆ Kontrollpunkt',innerX+65,y+91);
+function hud(){
+ ctx.save();
+ rounded(15,13,329,87,15,'#102e43df');
+ ctx.strokeStyle='#e1b875';ctx.lineWidth=2;ctx.strokeRect(16,14,327,85);
+ // Original blonde hero's face appears on his HUD portrait.
+ circle(63,56,41,'#172f42');circle(63,56,37,'#edc783');
+ ctx.save();ctx.beginPath();ctx.arc(63,56,33,0,Math.PI*2);ctx.clip();
+ if(ready(portrait))ctx.drawImage(portrait,78,20,89,83,29,20,68,72);
+ ctx.restore();
+ ctx.fillStyle='#fff8df';ctx.font='bold 14px system-ui';ctx.fillText('ENERGI',118,36);
+ rounded(117,47,212,17,8,'#1e3b4e');rounded(119,49,208*(player.hp/99),13,6,player.hp>30?'#87d782':'#f3a16f');
+ ctx.fillStyle='#ffffff';ctx.font='bold 22px system-ui';ctx.textAlign='right';ctx.fillText(`${player.hp} / 99`,328,87);ctx.textAlign='left';
+ // Capsules are a separate collectible counter, not additional lives.
+ rounded(363,15,141,35,11,'#102e43da');ctx.fillStyle='#fff2cc';ctx.font='bold 14px system-ui';ctx.fillText(`✦ ${score} / ${items.length}`,377,38);
+ if(player.x<180){rounded(360,63,277,37,12,'#fff5dbc9');ctx.fillStyle='#365667';ctx.font='bold 14px system-ui';ctx.fillText('→ Följ stigen mot skolan!',379,87)}
+ if(player.x>1840&&player.x<2100){rounded(357,65,275,40,12,'#fff5dbc9');ctx.fillStyle='#365667';ctx.font='bold 14px system-ui';ctx.fillText('✓ Kontrollpunkt aktiverad!',369,90)}
  ctx.restore();
 }
-function render(){background();drawPlatforms();scenery();drawItems();drawEnemies();hero();effects();hud();minimap();ctx.fillStyle='#0e263cbb';ctx.fillRect(W-215,H-30,215,30);ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText(`Stadsparken · v${VERSION}`,W-195,H-11)}
+function minimap(){
+ const x=691,y=13,w=253,h=128,ix=x+15,iy=y+36,iw=w-30,ih=67;
+ ctx.save();rounded(x,y,w,h,13,'#102c40ee');
+ ctx.strokeStyle='#e2be7b';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(x+2,y+2,w-4,h-4,12);ctx.stroke();
+ ctx.fillStyle='#f8e8ba';ctx.textAlign='center';ctx.font='bold 14px Georgia,serif';ctx.fillText('STADSPARKEN',x+w/2,y+22);ctx.textAlign='left';
+ rounded(ix,iy,iw,ih,5,'#1b3447');
+ // Top-down route constructed directly from all real platform positions.
+ for(const pl of platforms){
+  const px=ix+Math.round(pl.x/WORLD*iw),pw=Math.max(2,Math.round(pl.w/WORLD*iw));
+  const py=iy+11+Math.round((pl.y-300)/(GROUND-300)*34);
+  ctx.fillStyle=visitedSections.has(Math.floor(pl.x/(WORLD/12)))?'#aac5b0':'#647d8e';
+  ctx.fillRect(px,py,pw,pl.h>50?8:4);
+ }
+ // Unexplored sections fade naturally instead of revealing the route immediately.
+ for(let i=0;i<12;i++)if(!visitedSections.has(i)){
+  ctx.fillStyle='#0d243360';ctx.fillRect(ix+i*iw/12,iy,iw/12+1,ih);
+ }
+ const pos=ix+Math.max(0,Math.min(WORLD,player.x))/WORLD*iw;
+ const savePos=ix+1930/WORLD*iw;
+ circle(savePos,iy+32,6,checkpoint>80?'#ffd16a':'#7e8994');
+ circle(pos,iy+45,6,'#fff3dc');circle(pos,iy+45,4,'#e67861');
+ ctx.fillStyle='#f7edd9';ctx.font='11px system-ui';ctx.fillText('● Du',x+15,y+118);ctx.fillText('★ Kontrollpunkt',x+91,y+118);
+ ctx.restore();
+}
+// A few drifting petals give motion to a static painting without looking like UI.
+function ambient(){
+ ctx.save();
+ for(let i=0;i<17;i++){
+  const t=tick*.28+i*19.7;
+  const x=((i*263.7-t*1.5-camera*.18)%1120+1120)%1120-60;
+  const y=125+(i*67)%310+Math.sin(t*.034)*12;
+  ctx.save();ctx.translate(x,y);ctx.rotate(t*.015);
+  ctx.fillStyle=(i%3===0?'#fff3d2b0':i%3===1?'#f9bed29c':'#cce6a798');
+  ctx.beginPath();ctx.ellipse(0,0,2.5,5,.5,0,Math.PI*2);ctx.fill();ctx.restore();
+ }
+ ctx.restore();
+}
+function render(){background();drawPlatforms();scenery();drawItems();drawEnemies();hero();effects();ambient();hud();minimap();ctx.fillStyle='#0e263cbb';ctx.fillRect(W-215,H-30,215,30);ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText(`Stadsparken · v${VERSION}`,W-195,H-11)}
 function loop(t){const dt=Math.min(2,(t-last)/16.666||1);last=t;if(running&&!paused)update(dt);render();requestAnimationFrame(loop)}
 reset(false);try{if(localStorage.getItem('stadsparken-checkpoint')==='1930'){checkpoint=1930;player.x=1930}}catch{}requestAnimationFrame(loop);
