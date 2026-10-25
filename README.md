@@ -1,58 +1,45 @@
-# Stadens Hemlighet — Stadsparken v0.11.0
+# Stadens Hemlighet – Stadsparken v0.12.0
 
-**Spelbar prototyp** för GitHub Pages: en vänlig 2D-Metroidvania i en modern stad. Börja i Stadsparken, samla energikapslar och nå skolan. Spelet är fortfarande under utveckling; det är INTE en färdig handritad produktion.
+**Spelbar, fristående 2D-plattformspelprototyp för GitHub Pages**. Vi fokuserar på att förbättra samma Stadspark och samma godkända skolpojke innan fler Metroidvania-områden utvecklas.
 
-## Vad har ändrats i v0.11?
+## Vad är nytt i v0.12?
 
-- **65 nya sprites** i 9 animationstillstånd (stillastående, gång, löpning, hopp, fall, duckning, hugg, framåtvolt, skada). Alla byggs genom att dela upp och artikulera **samma godkända fullständiga skolpojke**. Inga avklippta del-figurer används längre i renderingen. Rörelsebilderna är alltså *rigganimation*, inte 65 individuellt nyritade illustrationer.
-- Gemensam bildyta **240 × 300** och konstant fotankare y=278. Storlek på skärmen cirka 157 px (bildyta), med samma karaktärsdesign.
-- Ny sammanhängande **4 000 px panoramabakgrund**, sammansatt av de två ursprungligen godkända parkmålningarna. Inga nya dekorativa referensbilder från nätet används.
-- Nya separata, lokala illustrationer för **stenplattformar, gräskanter, lyktor, blommor, flaggor, kontrollpunkt, skolport och vänliga fiender**.
-- Uppdaterat gränssnitt med pojkens porträtt, **99 som maximal energi**, kapselräknare och en rumslig minikarta.
-- Lugn promenad med piltangenterna och **Shift för snabbare löpning**. Befintliga hopp, sword, volt, checkpoint, fiender och sparfunktion är kvar.
-- Cache-versionering på CSS, JS och PNG-filer så GitHub Pages lättare visar den aktuella versionen.
-- Fullständiga godkända referensbilder sparade under `assets/references/`. Genereringsskript under `tools/` för reproducerbar grafik.
+- **Den riktiga sidovända skolpojken från det ursprungliga godkända karaktärsarket** används för gång och sprint. Det är fortfarande samma blonda pojke med vit huvtröja, röd huva, mörka byxor, sneakers och svärd.
+- Gång och sprint har nu **12 bildrutor vardera**, med mjuk kontinuerlig deformation av sidovyn för en konsekvent karaktär. Övriga animationer behåller v0.11-riggen. Totalt **69 transparenta sprites** i nio tillstånd.
+- **16 illustrerade sten/gräs-varianter** gör markytorna mindre upprepade. Skuggade **stenvalv** syns under vissa gångvägar; **animerat vatten** ligger i verkliga luckor mellan marksegmenten.
+- Fysik och spelbana bibehållna: 99 maxenergi, energi från kapslar, snälla fiender, fontänbakgrund, svärd, duckning, volt, hopp, sparpunkt, skolan som mål, minikarta och Shift-sprint.
+- Versionsnummer **v0.12.0** i spel, header och footer; dokumentation och projektets grafikkällor uppdaterade.
 
-## Testa lokalt och publicera
+**Viktigt om kvaliteten:** Det här är fortfarande inte exakt den rika, handritade referensbilden. Sidostegen är deformerade från en godkänd sidovy – inte 24 separat illustrerade keyframes – och förgrundens plattformar är ännu mindre detaljrika än bakgrunden. Referensbilder finns i `assets/references/` och ska styra fortsatt arbete.
 
-För lokal utveckling kan du öppna `index.html` via en enkel webbserver, exempelvis:
+## Installera och testa
 
-```bash
-python -m http.server 8000
-```
+1. Packa upp ZIP-filen och lägg **innehållet** (inte en överordnad extra mapp) i ditt GitHub-repository.
+2. Behåll `index.html` i roten, CSS i `css/`, JavaScript i `js/`, resurser i `assets/` och dokumentation i `docs/`.
+3. Aktivera GitHub Pages: **Settings → Pages → Deploy from a branch → main / (root)**.
+4. Ladda om hårt om en tidigare version visas. Sidans båda versionsetiketter ska nu visa **0.12.0**.
 
-Öppna sedan `http://localhost:8000` i din egen webbläsare. Du kan också publicera projektets **innehåll** i roten av ett GitHub-repository och aktivera **Settings → Pages → Deploy from a branch → main / (root)**.
+Vill du köra lokalt via en liten webbserver: `python -m http.server 8000` och öppna `http://localhost:8000` i din webbläsare. **Inga ramverk, CDN eller Python-paket behövs för att spela.**
 
-**OBS!** Lägg INTE hela mappen `stadsparken-v011` som en underkatalog om GitHub Pages ska hitta `index.html` i roten. Behåll `css/`, `js/`, `assets/`, `docs/` och `tools/`.
-
-## Tangenter
+## Kontroller
 
 | Handling | Tangent |
 |---|---|
-| Gå / vänd | `←` `→`, eller `A` `D` |
-| Spring | Håll `Shift` och rör dig |
-| Hoppa | `Mellanslag`, `W` eller `↑` |
+| Gå | `←` / `→` eller `A` / `D` |
+| Sprinta | Håll `Shift` och gå |
+| Hoppa | `Mellanslag`, `W`, `↑` |
 | Ducka | `↓` eller `S` |
-| Svärd | `J` eller `X` |
+| Hugg med svärd | `J` eller `X` |
 | Framåtvolt | `K` eller `C` |
 | Paus | `P` eller `Esc` |
+| Börja om | Knappen ”Starta om” |
 
-## Teknisk information
+## Dokument och byggning
 
-`index.html` hämtar `css/style.css` och `js/game.js`. Canvas är 960×540 och världen 3900 spelpixlar bred. Inga externa ramverk eller fjärrresurser behövs. Grafikfilerna skapas från de incheckade källfilerna med:
+Läs `docs/AI_CONTEXT.md` när projektet återupptas i en ny konversation. `docs/ART_STYLE.md` definierar låst karaktärsdesign; `docs/TECHNICAL.md` beskriver arkitekturen; `docs/QA.md` har tester och kända begränsningar. `docs/ROADMAP.md` har nästa etapper. `docs/CHANGELOG.md` sparar versionerna. Alla godkända karaktärs- och parkreferenser finns i `assets/references/`.
 
-```bash
-python tools/build_sprites.py
-python tools/build_park_assets.py
-python tools/build_panorama.py
-```
+Befintliga sprites och bakgrunder följer med. För den som vill **generera om illustrationerna** behövs Pillow, NumPy, OpenCV och SciPy och kommandot `python tools/rebuild_assets.py`. För källkodstest: `node --check js/game.js` och `node tools/test_game_logic.cjs`. De här verktygen behövs **inte** för själva spelet.
 
-Skripten kräver Python med Pillow, NumPy och OpenCV. **Du behöver inte köra dem för att spela**: de färdiga PNG-/JPG-filerna finns i ZIP-filen.
+## GitHub commit message
 
-## Kvarstående arbete
-
-Det här är en större förbättring, men **ingen pixelperfekt reproduktion av den godkända målbilden**. Framför allt saknar vi individuellt illustrerade, naturliga sidoorienterade rörelsesteg och ännu mer konsekventa målade foreground-tiles. Läs `docs/ROADMAP.md` och `docs/AI_CONTEXT.md` innan du påbörjar nästa version.
-
-## GitHub commit
-
-`feat: v0.11.0 - ny riggad skolpojke, sammanhängande park och illustrerade miljödelar`
+`feat: v0.12.0 - godkänd sidovy för gång och sprint samt rikare stadspark`
