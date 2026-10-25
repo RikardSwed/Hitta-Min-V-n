@@ -1,4 +1,21 @@
+## v0.15.0 — Metroid-lik framåtvolt och bättre rörelseövergångar
+
+- Tog bort den separata hjulningen.
+- Framåtvolt aktiveras nu när spelaren hoppar medan framåt hålls inne.
+- Förbättrad uppspelning av hopp, luftläge och landning.
+- Fortsatt finjustering av gång/löpning och kroppsbob.
+
 # Versionshistorik — Stadens Hemlighet
+
+## v0.15.0 — Tydligare steg och målade plattformar
+
+- Gång och sprint: 24 nya PNG-rutor i godkänd sidoprofil med var för sig roterade ben i stället för tidigare helt sammanhängande mesh-deformation. Skor kalibrerade till exakt samma baslinje (278 px). Ansikte, kläder, färger och svärd hämtas från den godkända originalteckningen.
+- Bildrutorna följer verkligt förflyttad sträcka, inte enbart klocktid; mjuka dammpuffar vid fotsteg och fall.
+- 8+8 gräs- och stenvarianter är nu utsnitt ur den ursprungligt godkända parken (`approved-park.png`), i stället för den förenklade datorritade texturen. Oförändrade plattformskollisioner.
+- Reproducerbar byggning: `tools/build_walk_rig.py`, `tools/build_illustrated_tiles.py`, och uppdaterat `tools/rebuild_assets.py`. Äldre skript sparas enbart som historik.
+- Node-kodkontroll, logiktest och Chromium-test med skärmbilder är körda. GitHub Pages live-test återstår.
+- **Begränsning:** Rörelserna är källillustrations-baserad riggning, inte individuellt nymålade animationer; handsving och viktförskjutning behöver ytterligare bildarbete. Målbildens hela detaljnivå är inte uppnådd.
+
 
 ## v0.12.0 — Profilvända rörelser och mer varierad stadspark
 

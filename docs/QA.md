@@ -1,17 +1,17 @@
-# QA — Stadsparken v0.12.0
+# QA — Stadsparken v0.15.0
 
 ## Automatiskt kontrollerat
 
 - [x] `node --check js/game.js` — JS-syntax.
-- [x] `node tools/test_game_logic.cjs` — simulering av faktiska spelrutiner: 99 HP, markkontakt, promenad, Shift-sprint, hopp, svärd, volt, omstart, 8 tilevarianter, 0.12.0.
+- [x] `node tools/test_game_logic.cjs` — simulering av faktiska spelrutiner: 99 HP, markkontakt, promenad, Shift-sprint, hopp, svärd, volt, omstart, 8 tilevarianter, 0.15.0.
 - [x] Chromium via `tools/visual_test_embedded.py` — den **riktiga spelkoden** och alla lokala bilder inbäddade utan vanlig lokal nätverksnavigering. Visuella skärmbilder för stillastående/gång/sprint/hopp/hugg. Inga `pageerror` observerades.
 - [x] Samtliga 69 animationer är 240×300 PNG och 16 nya variationstiles finns.
-- [x] CSS i `css/`; index-filen anger cache-version `0.12.0`.
+- [x] CSS i `css/`; index-filen anger cache-version `0.15.0`.
 - [x] ZIP: integritet, nödvändiga resurser och dokumentation (vid release).
 
 ## Manuell speltest efter GitHub-uppladdning
 
-- [ ] Index, spel HUD och sidfot visar v0.12.0 efter hård omladdning.
+- [ ] Index, spel HUD och sidfot visar v0.15.0 efter hård omladdning.
 - [ ] Pojken har godkänt vitt/rött utseende och är ungefär samma storlek i idle och gång.
 - [ ] Gång och sprint ser jämnare ut och skorna flyter inte under plattformens topp.
 - [ ] Vatten visas i verkliga luckor, och stenvalv skymmer inte spelaren.
@@ -26,3 +26,11 @@
 - Sidovyns gångsteg är fortfarande en mjuk deformering av godkänd målning; inte riktiga konstnärligt nytecknade keyframes. Därför kan fotställning och byxveck bli för stilla eller glida.
 - Parkens förgrund är fortfarande enklare än den rika målningen; stenvarianter och valv är en förbättring, inte en exakt reproduktion av referensbilden.
 - Live GitHub-publiceringen har inte kunnat verifieras här och bör testas av användaren.
+
+## Tilläggstester v0.13
+
+- [x] Ny 24-rutors gång-/sprint-rigg där fötter ligger på y278 (bildstorlek 240×300).
+- [x] 16 PNG-plattformar från godkänd målning (8+8).
+- [x] Stegdistansen ökar när spelaren går, Node-simuleringen passerar. `python tools/test_art_assets.py` verifierar även alla 69 sprites, exakt gångbaslinje 278 och 16 tilebilder.
+- [x] Chromium rendering av spelvyn med inbäddade lokala assets, inga JS `pageerror`.
+- [ ] GitHub Pages-manualtest i användarens repo och subjektiv värdering av rörelser.

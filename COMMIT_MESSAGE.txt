@@ -1,1 +1,1 @@
-feat: v0.12.0 - godkänd sidovy för gång och sprint samt rikare stadspark
+feat: v0.15.0 - byt hjulning mot Metroid-lik framåtvolt och förbättra rörelsemönster
