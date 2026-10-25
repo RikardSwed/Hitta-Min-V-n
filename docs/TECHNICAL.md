@@ -1,39 +1,46 @@
-# TECHNICAL — v0.11.0
+# TECHNICAL — v0.12.0
 
-## Arkitektur
+## Arkitektur och filstruktur
 
-Statisk klientapp utan bundler eller externa bibliotek. `index.html` hänvisar till `css/style.css?v=0.11.0` och `js/game.js?v=0.11.0`. **Spelvyn är HTML5 Canvas**, 960×540. Koden körs via requestAnimationFrame och ett tidssteg klippt till maximalt 2 bildrutsekvivalenter. Världen är 3 900 bred, grundlinje 462.
+Spelbar statisk webbapp utan ramverk: `index.html` → `css/style.css?v=0.12.0` + `js/game.js?v=0.12.0`. Canvas 960×540, värld 3900 px bred, markens topp y=462. Alla spelresurser ligger lokalt och fungerar på GitHub Pages. Inga externt laddade fonter eller bibliotek.
 
-Spellogik och rendering finns i `js/game.js`. Översikt: `update()` (input, rörelsefysik, kollision, fiender, plockbara kapslar, checkpoint), `background()`, `drawPlatforms()`, `scenery()`, `hero()`, `hud()`, `minimap()`, `render()`.
+Koden ligger i `js/game.js`: `update()` ansvarar för input, acceleration, gravitation, kollision, fiender, kapslar, kontrollpunkt och mål; `background()`, `water()`, `drawPlatforms()`, `gardenArches()`, `scenery()`, `hero()`, `hud()` och `minimap()` målar spelet. Tid normaliseras mot 60 fps via `requestAnimationFrame`, max 2 steg/frame.
 
-## Kontroller och mekanik
+## Animationer — 69 filer
 
-- Pilar / A D = förflyttning (3,6 px/frame vid konstant framerate); Shift + rörelse = sprint (5,8). Duckning bromsar till 1,35.
-- Space/W/upp = hopp; hoppbuffert 8, coyote time 7. Kortare hopp vid tidigt knappsläpp.
-- J/X = svärd; K/C = framåtvolt med kort osårbarhet; ned/S = ducka.
-- P/Esc = paus; fokusförlust pausar.
-- Max HP 99, fiendeskada 18, fall 25, energikapslar +15 upp till 99. Ingen inbyggd betalning eller backend.
-- Kontrollpunkt vid x≈1930 sparas i localStorage med nyckeln `stadsparken-checkpoint`. Starta om-knappen rensar den.
+`assets/characters/animated/`: RGBA PNG 240×300, baslinje **y=278**, stilla8, gå12, sprint12, hopp6, fall5, ducka4, hugg8, volt10, skada4.
 
-## Assetstruktur
+- `assets/source/approved-fullbody.png`: godkänd fullfigur framifrån; källa för sju animeringslägen, genererad med `tools/build_sprites.py`.
+- `assets/source/approved-side-profile.png`: noggrant frilagd originalgodkänd **sidovy** med samma skolvita/röda kläder; extraherad med `tools/extract_side.py` från `assets/references/approved-original-character-and-areas.png`.
+- `tools/build_side_walk.py`: genererar 12+12 gång/löpbilder med kontinuerligt deformationsfält från sidovyn. Det är **inte 24 separata handteckningar**. Sidovyn ser mot vänster och spelets PNG spegelvänds en gång mot höger. `hero()` spegelvänder till vänsterrörelse via `player.face`.
+- Fysikkollidern är 31×54 px och **separat från de större bilderna**. Lägre/högre bildstorlekar får inte ändra kollision eller `player.y + player.h` som visuellt fotankare.
 
-- `assets/references/`: Godkända hela designreferenser (sparas för kontinuitet, laddas inte av spelet).
-- `assets/source/approved-fullbody.png`: Kanonisk, komplett godkänd poserad pojke som används i riggbilder.
-- `assets/characters/animated/`: **65 st 240×300 RGBA-PNG**, tillstånd: idle8, walk10, run10, jump6, fall5, crouch4, slash8, roll10, hurt4.
-- `assets/backgrounds/approved-park-panorama.jpg`: Sammanfogad bild av två godkända parkmålningar, 4000×540.
-- `assets/decor/`: Illustrerade marker, plattformshyllor, lyktor, blommor, banner, checkpoint, skolport, fiende. Bakgrunds- och legacyresurser sparas separat.
-- `tools/build_sprites.py`, `tools/build_panorama.py`, `tools/build_park_assets.py`: Reproducerbar grafikgenerering från lokala källfiler (Pillow, NumPy, OpenCV). Körs **inte** i webbläsaren.
+## Miljön
 
-## Renderingsregler
+`assets/backgrounds/approved-park-panorama.jpg` är byggd från två tidigare godkända parkmålningar. `assets/decor/` innehåller föremål, lyktor, blommor och fiender. `assets/tiles/variants/` innehåller **8 vägg- och 8 hyllvarianter** för att undvika mekanisk upprepning; `tools/build_tile_variants.py` skapar dem från basgrafik. Rörligt vatten visas bara mellan verkliga marksegment: `[670,735]`, `[1425,1500]`, `[2170,2250]`, `[2950,3040]`. Stenvalv ligger helt **under** solida plattformars kollisionsyta.
 
-Karaktärens fotankare ligger på pixel 278 av varje 300 pixlar hög bild. Den ritas centrerad ovanför spelens fotpunkt (`player.y + player.h`). Fysiskt spelarkollider är 31×54 och är **separat** från tecknad figur; förändring av sprites får inte ändra kollisionsfysiken. Gång/running laddas som separata bilder, fps är rörelseberoende; `hero()` väljer aktivt tillstånd och bildindex.
+Minikartan översätter positionskoordinater och plattformar till en 12-sektionsskiss. Framsteg, kapslar och kontrollpunkt påverkar HUD. Maximal energi är 99, fiendeträff kostar 18, fall kostar 25, kapsel ger +15 till max 99. Kontrollpunkt x≈1930 sparas till `localStorage` (`stadsparken-checkpoint`).
 
-`panorama` rör sig med 0,90× kameraposition. Förgrundsplattformar är sammansatta av modulara grafikbilder på kollisionsplattformarnas toppkoordinater. Minikartan beräknar spelarposition och plattformar från faktiska världskoordinater.
+## Bygga grafik igen
 
-## Cacheversion och deployment
+Spelaren behöver inga Python-paket; färdiga PNG/JPG följer med. För den som behöver generera om resurserna:
 
-`?v=0.11.0` används på JS/CSS och runtime-bilder för att undvika att en gammal kopia visas från webbläsarcachen efter GitHub-uppdatering. `index.html` och kataloger ska ligga vid GitHub Pages-publiceringsroten. Inga absoluta sökvägar används.
+```bash
+pip install pillow numpy opencv-python scipy
+python tools/rebuild_assets.py
+```
 
-## Verifiering
+Rätt ordning: `build_sprites.py` först, därefter `extract_side.py`, `build_side_walk.py` som **ersätter gång/sprint**, därefter `build_park_assets.py`, `build_tile_variants.py`, `build_panorama.py`. Kör inte `build_sprites.py` ensam efter sidogånggeneratorn utan att sedan regenerera sidogången. Källorna och referenserna ingår i ZIP.
 
-`node --check js/game.js` för JavaScript-syntax. Bilder kan verifieras med Pillow och ZIP med `unzip -t`. Spelet har även öppnats i Chromium i en isolerad HTML-testmiljö med lokalt inlinade bilder, och gameplay-skärmbilder för olika animationer har inspekterats; det testade INTE en livepublicering på GitHub Pages. Se `docs/QA.md` för manuell checklista.
+## QA
+
+```bash
+node --check js/game.js
+node tools/test_game_logic.cjs
+```
+
+Valfritt grafiskt Chromium-test kräver Playwright, via `python tools/visual_test_embedded.py`. Testet bäddar in alla lokala bildfiler i en minnessida eftersom testmiljön blockerar lokala navigations-URL:er. Browser-testet har alltså **inte kontrollerat publicering via GitHub**. Se `docs/QA.md`.
+
+## Uppdatering och cache
+
+Ändra VERSION i `js/game.js`, `?v` i JS och HTML, header/footer i `index.html`, dokumentation och `COMMIT_MESSAGE.txt` vid varje release. `index.html` ligger i repo-root och `css`, `js`, `assets`, `docs` behåller underkataloger.

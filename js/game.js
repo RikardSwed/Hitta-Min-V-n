@@ -1,9 +1,9 @@
 
 // All resources are local; the site works on static GitHub Pages.
-const cache='?v=0.11.0';
+const cache='?v=0.12.0';
 
 // 65 articulated frames derived from the approved full-body schoolboy artwork.
-const animationLengths={idle:8,walk:10,run:10,jump:6,fall:5,crouch:4,slash:8,roll:10,hurt:4};
+const animationLengths={idle:8,walk:12,run:12,jump:6,fall:5,crouch:4,slash:8,roll:10,hurt:4};
 const animations={};
 for(const [name,count] of Object.entries(animationLengths)){
  animations[name]=Array.from({length:count},(_,i)=>{
@@ -21,13 +21,19 @@ for(const [key,filename] of Object.entries({
 })){
  const img=new Image();img.src='assets/decor/'+filename+cache;artwork[key]=img;
 }
+// Eight illustrated surface variations eliminate the obvious 256-pixel wallpaper repeat.
+const tiles={wall:[],ledge:[]};
+for(const type of Object.keys(tiles))for(let i=0;i<8;i++){
+ const image=new Image();image.src=`assets/tiles/variants/${type}-${i}.png${cache}`;
+ tiles[type].push(image);
+}
 function ready(img){return img&&img.complete&&img.naturalWidth>0}
 const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d');
 const W=960,H=540,WORLD=3900,GROUND=462;
 const overlay=document.querySelector('#overlay'),overlayTitle=document.querySelector('#overlayTitle'),overlayText=document.querySelector('#overlayText');
 let running=false,paused=false,won=false,camera=0,tick=0,sound=true,last=0,checkpoint=80,score=0,particles=[];
 let coyote=0,jumpBuffer=0,heroPose="idle",heroPoseTime=0;
-const VERSION='0.11.0';
+const VERSION='0.12.0';
 let visitedSections=new Set();
 const keys=new Set(),pressed=new Set();
 const platforms=[{x:0,y:GROUND,w:670,h:90},{x:735,y:GROUND,w:690,h:90},{x:1500,y:GROUND,w:670,h:90},{x:2250,y:GROUND,w:700,h:90},{x:3040,y:GROUND,w:860,h:90},
@@ -94,23 +100,88 @@ function scenery(){
  drawWorldImage('school',3734,GROUND-154,160,154);
  ctx.restore();
 }
+// A low-water channel belongs to each real gap in the stage, not a non-collidable fake bridge.
+const waterChannels=[[670,735],[1425,1500],[2170,2250],[2950,3040]];
+function water(){
+ ctx.save();ctx.translate(-camera,0);
+ for(let k=0;k<waterChannels.length;k++){
+  const [a,b]=waterChannels[k];if(b<camera-90||a>camera+W+90)continue;
+  const x=a-16,w=b-a+32,y=GROUND+3;
+  const grad=ctx.createLinearGradient(0,y,0,H);grad.addColorStop(0,'#8ccbcc');grad.addColorStop(.55,'#3a91ac');grad.addColorStop(1,'#256d8c');
+  ctx.fillStyle=grad;ctx.fillRect(x,y,w,H-y);
+  ctx.strokeStyle='#e5f8e2a8';ctx.lineWidth=2;
+  for(let row=0;row<9;row++){
+   const yy=y+12+row*10;
+   for(let j=0;j<3;j++){
+    const xx=x+((j*39+row*17+tick*.47)%(w+28))-14;
+    ctx.beginPath();ctx.moveTo(xx,yy);ctx.quadraticCurveTo(xx+9,yy-3,xx+18,yy);ctx.stroke();
+   }
+  }
+  for(const bank of [a-7,b+5]){
+   ctx.strokeStyle='#386c51';ctx.lineWidth=2.4;
+   for(let j=0;j<5;j++){
+    const xx=bank+(j-2)*4;
+    ctx.beginPath();ctx.moveTo(xx,GROUND+27);ctx.quadraticCurveTo(xx+j*2,GROUND+12,xx+Math.sin(tick*.025+j)*4,GROUND-9-j*3);ctx.stroke();
+   }
+  }
+ }
+ ctx.restore();
+}
 function drawPlatforms(){
  ctx.save();ctx.translate(-camera,0);
  for(const p of platforms){
-  if(p.x>camera+W+50||p.x+p.w<camera-50)continue;
+  if(p.x>camera+W+60||p.x+p.w<camera-60)continue;
   const ground=p.h>50;
-  const img=artwork[ground?'wall':'ledge'];
+  // The collider top is always exactly p.y, including the suspended shelves.
   const thickness=ground?Math.max(145,p.h):51;
   ctx.save();ctx.beginPath();ctx.rect(p.x,p.y,p.w,thickness);ctx.clip();
-  if(ready(img)){
-   const tileW=ground?256:256;
-   for(let x=p.x;x<p.x+p.w;x+=tileW){
-     ctx.drawImage(img,x,p.y,tileW,ground?144:58);
-     if(ground){for(let y=p.y+144;y<p.y+thickness;y+=144)ctx.drawImage(img,x,y,tileW,144)}
-   }
-  }else{rounded(p.x,p.y,p.w,thickness,3,'#405c58');}
-  // The entire collider surface stays at y=p.y, regardless of decorative overhang.
+  let n=0;
+  for(let x=p.x;x<p.x+p.w;x+=256,n++){
+   const variant=(Math.floor(p.x/173)+n*5+n*n)%8;
+   const img=tiles[ground?'wall':'ledge'][variant];
+   if(ready(img)){
+    const th=ground?144:58;
+    for(let y=p.y;y<p.y+thickness;y+=th)ctx.drawImage(img,x,y,256,th);
+   }else{ctx.fillStyle=ground?'#52686b':'#58696a';ctx.fillRect(x,p.y,256,thickness)}
+  }
   ctx.restore();
+  // Add ivy and shaded masonry beneath suspended ledges; does not affect hitboxes.
+  if(!ground){
+   ctx.strokeStyle='#2f60517c';ctx.lineWidth=3;
+   const n=Math.floor(p.w/44);
+   for(let i=0;i<n;i++){
+    const x=p.x+22+i*44;
+    ctx.beginPath();ctx.moveTo(x,p.y+40);ctx.quadraticCurveTo(x+7,p.y+59,x+Math.sin(tick*.02+i)*3,p.y+66+i%3*10);ctx.stroke();
+   }
+  }
+ }
+ ctx.restore();
+}
+// Illustrated masonry arches built into solid garden terraces.
+// Entire decoration stays BELOW the actual collision surface.
+function gardenArches(){
+ ctx.save();ctx.translate(-camera,0);
+ for(const [x,w] of [[410,158],[1160,166],[1860,160],[2590,164],[3320,172]]){
+  if(x+w<camera-30||x>camera+W+30)continue;
+  const top=GROUND+32,left=x,right=x+w;
+  const ink=ctx.createLinearGradient(0,top,0,H);
+  ink.addColorStop(0,'#132c3d');ink.addColorStop(.42,'#2d6177');ink.addColorStop(1,'#5aa8ad');
+  ctx.fillStyle=ink;ctx.beginPath();ctx.moveTo(left,H+10);ctx.lineTo(left,GROUND+69);
+  ctx.quadraticCurveTo(x+w/2,top-34,right,GROUND+69);ctx.lineTo(right,H+10);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#32454a';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(left,GROUND+69);
+  ctx.quadraticCurveTo(x+w/2,top-34,right,GROUND+69);ctx.stroke();
+  ctx.strokeStyle='#b8bba2';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(left-4,GROUND+69);
+  ctx.quadraticCurveTo(x+w/2,top-38,right+4,GROUND+69);ctx.stroke();
+  // Stone voussoirs radiate around each arch crown.
+  for(let i=1;i<7;i++){
+   const q=i/7,xx=left+q*w,yy=GROUND+69-(w/2)*(1-Math.pow(2*q-1,2))*.43;
+   ctx.strokeStyle='#c0c7b35e';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(xx,yy-7);ctx.lineTo(xx+(q-.5)*8,yy+4);ctx.stroke();
+  }
+  ctx.strokeStyle='#cef3e586';ctx.lineWidth=1.7;
+  for(let i=0;i<5;i++){
+   const yy=GROUND+75+i*10,xx=left+16+i*17;
+   ctx.beginPath();ctx.moveTo(xx,yy);ctx.quadraticCurveTo(xx+11+Math.sin(tick*.02+i)*3,yy-2,xx+25,yy);ctx.stroke();
+  }
  }
  ctx.restore();
 }
@@ -142,7 +213,7 @@ function hero(){
  if(action!==heroPose){heroPose=action;heroPoseTime=0}
  else heroPoseTime+= (action==='walk'||action==='run')?Math.max(.35,Math.abs(p.vx)/3.5):1;
  const frames=animations[action];
- const delay={idle:11,walk:5.5,run:4.2,jump:6,fall:6,crouch:8,slash:2,roll:2.25,hurt:5}[action];
+ const delay={idle:11,walk:4.6,run:3.55,jump:6,fall:6,crouch:8,slash:2,roll:2.25,hurt:5}[action];
  const idx=(action==='slash')?Math.min(frames.length-1,Math.floor((13-p.attack)/(13/frames.length))):
   (action==='roll')?Math.min(frames.length-1,Math.floor((23-p.roll)/(23/frames.length))):
   Math.floor(heroPoseTime/delay)%frames.length;
@@ -150,7 +221,7 @@ function hero(){
  ctx.save();ctx.translate(screenX,footY);ctx.scale(p.face,1);
  if(p.ground){ctx.fillStyle='#122b3340';ctx.beginPath();ctx.ellipse(0,1,30,5,0,0,Math.PI*2);ctx.fill()}
  if(p.inv>0&&Math.floor(tick/4)%2)ctx.globalAlpha=.53;
- const drawH=157,drawW=125,footRatio=278/300;
+ const drawH=157,drawW=(action==='walk'||action==='run')?133:125,footRatio=278/300;
  if(ready(img))ctx.drawImage(img,-drawW/2,-drawH*footRatio,drawW,drawH);
  else{rounded(-17,-104,34,104,8,'#f5efe7');circle(0,-110,18,'#e9c05f')}
  if(p.attack>0){
@@ -217,6 +288,6 @@ function ambient(){
  }
  ctx.restore();
 }
-function render(){background();drawPlatforms();scenery();drawItems();drawEnemies();hero();effects();ambient();hud();minimap();ctx.fillStyle='#0e263cbb';ctx.fillRect(W-215,H-30,215,30);ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText(`Stadsparken · v${VERSION}`,W-195,H-11)}
+function render(){background();water();drawPlatforms();gardenArches();scenery();drawItems();drawEnemies();hero();effects();ambient();hud();minimap();ctx.fillStyle='#0e263cbb';ctx.fillRect(W-215,H-30,215,30);ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText(`Stadsparken · v${VERSION}`,W-195,H-11)}
 function loop(t){const dt=Math.min(2,(t-last)/16.666||1);last=t;if(running&&!paused)update(dt);render();requestAnimationFrame(loop)}
 reset(false);try{if(localStorage.getItem('stadsparken-checkpoint')==='1930'){checkpoint=1930;player.x=1930}}catch{}requestAnimationFrame(loop);

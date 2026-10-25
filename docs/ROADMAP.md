@@ -1,25 +1,21 @@
-# ROADMAP — prioritering efter v0.11.0
+# ROADMAP — efter v0.12.0
 
-## Genomfört
+## Färdigt och verifierat
 
-- Spelbar Stadspark, max 99 energi, svärd, volt, duckning, hopp, fiender, samlarobjekt, kontrollpunkt, vinstvillkor.
-- Minikarta uppe till höger, versionsnummer i spel och på sidan, dokumentation och GitHub Pages-struktur.
-- v0.11: **65 riggade animationsrutor utifrån en enda godkänd karaktär**, gemensam bildyta/fotankare och skild promenad/sprint.
-- v0.11: sammanhängande lång parkmålning sammansatt av originalmålningar, nya illustrerade plattformstiles och parkdetaljer.
-- Chromium-skärmbildskontroll av flera lägen och JavaScript-syntaxkontroll.
+- Spelbar Stadspark med 99 maxenergi, fiender, svärd, hopp, duckning, sprint, volt, kapslar, lokal kontrollpunkt och mål.
+- Godkända referensillustrationer arkiverade i `assets/references/`, utan generiskt utbytt karaktär.
+- 69 sprites: sidovy för gång/sprint i 12+12 rutor, övriga animerade helfigursposer. Samma fotankare och kollider.
+- 16 variationsrikare plattformstiles, vatten i markluckor och illustrerade stenvalv.
+- Minikarta, porträtt, versionsnummer och CSS i `css/`.
+- Teknisk testning och inbäddad Chromium-skärmbildsgranskning av flera rörelser.
 
-## Nästa 3 prioriteringar
+## Nästa viktiga etapper, INTE nya banor ännu
 
-1. **Konstnärlig kvalitet på karaktären.** Ta fram riktiga individuella profilvända posesekvenser i samma vita/röda design för gång, sprint, hopp, svärd och volt. Kontrollera silhouette, vågrörelse, benpendling och att fötterna inte svävar.
-2. **Miljöillustrationerna.** Förfina foreground-tilevariation, broar, vatten och träd för att komma närmare `assets/references/approved-gameplay-visual-target.png`. Minska synlig tile-repetition utan att flytta kollisionsytor.
-3. **Speltest och feedback.** Be användaren testa v0.11 efter uppdatering på GitHub Pages och åtgärda avvikelser innan nya funktioner.
-
-## Senare
-
-- Ljuddesign och ett eget musikaliskt tema, med en användarstyrd ljudknapp.
-- Nya fiendetyper, djupare hemligheter, bättre nivåövergång och sann Metroidvania-koppling till skolan och stadens andra delar.
-- Responsivt gränssnitt, tillgänglighet och eventuellt touchkontroller efter datorversionen.
+1. **Riktigt ritad gångcykel:** Illustrera och granska profilsteg ett i taget med samma godkända pojke; fotkontakt (ingen glidning), tydliga arm-/benpendlingar och sömlös övergång till idle/sprint. v0.12 använder ännu varsam deformation av sidovyn.
+2. **Miljöns konstnärliga kvalitet:** Ytterligare djup i murverk, fontän, brosidor, terrasser och trädkronornas förgrund. Minska skillnaden mellan högupplöst målning och procedurillustrerade plattformar. Kontrollera skärm för skärm.
+3. **Speltest efter feedback:** GitHub Pages-test på användarens riktiga webbplats och åtgärd av det som faktiskt sticker ut. Inga nya mekaniker innan den här banan känns och ser rätt ut.
+4. **Senare:** Kort eget soundtrack, miljöljud, framtida stadsdelar, mer Metroidvania-återbesök.
 
 ## Releasepolicy
 
-Leverera hellre färre, mer kontrollerade versioner med tydliga skärmbildstester. Ny release ska innehålla version i spelet + footer, README, AI_CONTEXT, CHANGELOG, TECHNICAL, ART_STYLE, ZIP, GitHub-commit och kända begränsningar.
+**Färre, mer genomarbetade versioner.** Ny version ska ha verkliga ändringar, verifierade lokala tillgångar, Node-syntax/logic-test, verkliga visuella skärmbilder när möjligt, aktuell README/TECHNICAL/ART_STYLE/ROADMAP/QA/AI_CONTEXT/CHANGELOG, versionsnummer, en komplett ZIP och GitHub-commit.

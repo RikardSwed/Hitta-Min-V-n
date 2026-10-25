@@ -6,7 +6,6 @@ from PIL import Image, ImageDraw, ImageFilter, ImageChops
 from pathlib import Path
 import math, cv2, numpy as np
 P=Path(__file__).resolve().parent.parent
-src=Image.open(P/'assets/characters/idle.png').convert('RGBA')
 # Source original is cropped differently from assembled 240x300 frame; use v0.10 approved full-body image.
 base=Image.open(P/'assets/source/approved-fullbody.png').convert('RGBA')
 SW,SH=base.size

@@ -1,31 +1,28 @@
-# QA — kontrollista för v0.11
+# QA — Stadsparken v0.12.0
 
-## Tekniskt kontrollerat
+## Automatiskt kontrollerat
 
-- `node --check js/game.js`: ingen syntaxerror.
-- Alla sprite-PNG-filer 240×300 med transparent alpha; totalt 65.
-- HTML pekar på `css/style.css?v=0.11.0` och `js/game.js?v=0.11.0`.
-- Skärmbilder från Chromium med inlinade lokala assetbilder (eftersom testmiljön blockerar lokala navigationsadresser): start, promenad, sprint, hopp, hugg och volt. Inga `pageerror` observerade. Startvyn finns i `docs/preview-v011.png`.
-- Automatiska Chromium-kontroller klarade: alla 65 bildrutor laddade, start på 99 HP, normal gång, Shift-sprint, kontrollpunkt, skada till noll och återstart samt mål vid skolan.
+- [x] `node --check js/game.js` — JS-syntax.
+- [x] `node tools/test_game_logic.cjs` — simulering av faktiska spelrutiner: 99 HP, markkontakt, promenad, Shift-sprint, hopp, svärd, volt, omstart, 8 tilevarianter, 0.12.0.
+- [x] Chromium via `tools/visual_test_embedded.py` — den **riktiga spelkoden** och alla lokala bilder inbäddade utan vanlig lokal nätverksnavigering. Visuella skärmbilder för stillastående/gång/sprint/hopp/hugg. Inga `pageerror` observerades.
+- [x] Samtliga 69 animationer är 240×300 PNG och 16 nya variationstiles finns.
+- [x] CSS i `css/`; index-filen anger cache-version `0.12.0`.
+- [x] ZIP: integritet, nödvändiga resurser och dokumentation (vid release).
 
-## Manuell test på GitHub Pages (du som spelar)
+## Manuell speltest efter GitHub-uppladdning
 
-- [ ] Webbsidan och spelet visar **v0.11.0** (både över och under spelvyn).
-- [ ] Karaktären har vit tröja, röd huva, blont hår och jämn storlek när han står/går/springer.
-- [ ] Fötterna är på plattformarna när han står, går, springer och duckar.
-- [ ] Shift + höger/vänster ger snabbare löpning än vanlig promenad.
-- [ ] Mellanslag hoppar; kort tryck ger kortare hopp och pojken landar på plattformarna.
-- [ ] J/X visar svärd och kan besegra en grön parkfiende.
-- [ ] K/C ger framåtvolt som skyddar mot en fiende.
-- [ ] Energin startar på 99 och minskar vid träff; kapslar fyller på maximalt till 99.
-- [ ] Minikartan visar spelarposition och öppnar besökta sektioner.
-- [ ] Kontrollpunkt aktiveras ungefär halvvägs och återstart återplacerar spelaren rätt.
-- [ ] Målet vid skolan visar att banan är avklarad.
-- [ ] Starta om-knappen återställer från början.
-- [ ] Inga avklippta figurer eller gamla bakgrunder visas efter hård omladdning.
+- [ ] Index, spel HUD och sidfot visar v0.12.0 efter hård omladdning.
+- [ ] Pojken har godkänt vitt/rött utseende och är ungefär samma storlek i idle och gång.
+- [ ] Gång och sprint ser jämnare ut och skorna flyter inte under plattformens topp.
+- [ ] Vatten visas i verkliga luckor, och stenvalv skymmer inte spelaren.
+- [ ] Stenplattformar ser mer varierade ut och map/energi ligger på rätt ställen.
+- [ ] J/X svärd, C/K volt, W/Space hopp och ↓/S duckning fungerar.
+- [ ] Energikapslar maxar på 99 och fiender kan skada spelaren.
+- [ ] Halvvägs aktiveras kontrollpunkt; död och återstart samt skolmålet fungerar.
+- [ ] Inga saknade bilder, inga nya console-fel på publicerad GitHub Pages-adress.
 
-## Kända visuella begränsningar
+## Kända begränsningar
 
-- Riggade ledrörelser bygger på en frontorienterad originalillustration: de är **inte** slutligt tecknade sidoposer.
-- Panorama har avsiktligt återanvända delar av godkänd parkmålning och tilevariationerna är fortfarande begränsade.
-- Fiender, HUD och dekor är enklare illustrerade än den detaljerade referensbilden.
+- Sidovyns gångsteg är fortfarande en mjuk deformering av godkänd målning; inte riktiga konstnärligt nytecknade keyframes. Därför kan fotställning och byxveck bli för stilla eller glida.
+- Parkens förgrund är fortfarande enklare än den rika målningen; stenvarianter och valv är en förbättring, inte en exakt reproduktion av referensbilden.
+- Live GitHub-publiceringen har inte kunnat verifieras här och bör testas av användaren.
