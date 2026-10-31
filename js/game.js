@@ -1,18 +1,21 @@
+import {FRAME_COUNTS,FILE_PREFIX,selectAction,frameFor,advanceGait,artMotion} from './animator.js?v=0.21.0';
 
 // All resources are local; the site works on static GitHub Pages.
-const cache='?v=0.15.0';
+const cache='?v=0.21.0';
 
-// 69 approved-character frames; walk/run rebuilt with painted leg rotation from the approved side view.
-const animationLengths={idle:8,walk:12,run:12,jump:6,fall:5,crouch:4,slash:8,roll:10,hurt:4};
+// Eight walk and eight run poses use four approved painted originals each, plus
+// four rigged passing frames per gait (single-source warps, not alpha ghosting).
+// Jump/spin and landing keep the previously approved drawn-source art.
+const animationLengths=FRAME_COUNTS;
 const animations={};
 for(const [name,count] of Object.entries(animationLengths)){
  animations[name]=Array.from({length:count},(_,i)=>{
-  const image=new Image();image.src=`assets/characters/animated/${name}_${String(i).padStart(2,'0')}.png${cache}`;return image;
+  const image=new Image();image.src=`assets/characters/production/${FILE_PREFIX[name]||name}_${String(i).padStart(2,'0')}.png${cache}`;return image;
  });
 }
 
 const panorama=new Image();panorama.src='assets/backgrounds/approved-park-panorama.jpg'+cache;
-const portrait=new Image();portrait.src='assets/characters/animated/idle_00.png'+cache;
+const portrait=new Image();portrait.src='assets/characters/production/idle_00.png'+cache;
 const artwork={};
 for(const [key,filename] of Object.entries({
   wall:'mossy-wall.png',ledge:'grass-ledge.png',lamp:'park-lamp.png',flowers:'flowers.png',
@@ -32,9 +35,10 @@ const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d');
 const W=960,H=540,WORLD=3900,GROUND=462;
 const overlay=document.querySelector('#overlay'),overlayTitle=document.querySelector('#overlayTitle'),overlayText=document.querySelector('#overlayText');
 let running=false,paused=false,won=false,camera=0,tick=0,sound=true,last=0,checkpoint=80,score=0,particles=[];
+const FRAME_MS=1000/60;let accumulator=0,renderDt=0,simFrames=0;
 let coyote=0,jumpBuffer=0,heroPose="idle",heroPoseTime=0,stepDistance=0,lastDustStep=-1;
-let motionTime=0,lastGround=false,landSquash=0,jumpLift=0,footTravel=0;
-const VERSION='0.15.0';
+let motionTime=0,lastGround=false,landSquash=0,jumpLift=0,footTravel=0,debugArt=false,artState='idle',artFrame=0;
+const VERSION='0.21.0';
 let visitedSections=new Set();
 const keys=new Set(),pressed=new Set();
 const platforms=[{x:0,y:GROUND,w:670,h:90},{x:735,y:GROUND,w:690,h:90},{x:1500,y:GROUND,w:670,h:90},{x:2250,y:GROUND,w:700,h:90},{x:3040,y:GROUND,w:860,h:90},
@@ -42,25 +46,27 @@ const platforms=[{x:0,y:GROUND,w:670,h:90},{x:735,y:GROUND,w:690,h:90},{x:1500,y
 const initialItems=[{x:300,y:334},{x:518,y:266},{x:890,y:332},{x:1100,y:267},{x:1610,y:330},{x:1840,y:270},{x:2380,y:327},{x:2640,y:269},{x:3170,y:333},{x:3440,y:269}];
 const initialEnemies=[{x:570,min:510,max:645},{x:930,min:770,max:1100},{x:1660,min:1520,max:1900},{x:2090,min:1980,max:2160},{x:2440,min:2270,max:2660},{x:3260,min:3070,max:3450},{x:3660,min:3530,max:3810}];
 let items=[],enemies=[];
-const player={x:80,y:300,w:31,h:54,vx:0,vy:0,face:1,ground:false,hp:99,inv:0,attack:0,attackCD:0,crouch:false,spin:false,spinClock:0};
-function reset(full=true){checkpoint=full?80:checkpoint;player.x=checkpoint;player.y=280;player.vx=0;player.vy=0;player.hp=99;player.inv=0;player.attack=0;player.ground=false;player.spin=false;player.spinClock=0;camera=0;tick=0;score=0;particles=[];coyote=0;jumpBuffer=0;heroPose="idle";heroPoseTime=0;stepDistance=0;lastDustStep=-1;motionTime=0;lastGround=false;landSquash=0;jumpLift=0;footTravel=0;visitedSections=new Set();items=initialItems.map((v,i)=>({...v,id:i,taken:false}));enemies=initialEnemies.map((v,i)=>({...v,id:i,y:GROUND-29,w:39,h:29,dir:i%2?1:-1,alive:true}));if(full){try{localStorage.removeItem('stadsparken-checkpoint')}catch{}}}
+const player={x:80,y:300,w:31,h:54,vx:0,vy:0,face:1,ground:false,hp:99,inv:0,attack:0,attackCD:0,crouch:false,spin:false,spinClock:0,gaitPhase:0,airAge:0,landTimer:0,landClock:0,landDuration:9,accel:0};
+function reset(full=true){checkpoint=full?80:checkpoint;player.x=checkpoint;player.y=280;player.vx=0;player.vy=0;player.hp=99;player.inv=0;player.attack=0;player.ground=false;player.spin=false;player.spinClock=0;player.gaitPhase=0;player.airAge=0;player.landTimer=0;player.landClock=0;player.landDuration=9;player.accel=0;camera=0;tick=0;accumulator=0;simFrames=0;score=0;particles=[];coyote=0;jumpBuffer=0;heroPose="idle";heroPoseTime=0;stepDistance=0;lastDustStep=-1;motionTime=0;lastGround=false;landSquash=0;jumpLift=0;footTravel=0;visitedSections=new Set();items=initialItems.map((v,i)=>({...v,id:i,taken:false}));enemies=initialEnemies.map((v,i)=>({...v,id:i,y:GROUND-29,w:39,h:29,dir:i%2?1:-1,alive:true}));if(full){try{localStorage.removeItem('stadsparken-checkpoint')}catch{}}}
 function show(title,text,button){overlayTitle.textContent=title;overlayText.textContent=text;document.querySelector('#play').textContent=button;overlay.classList.remove('hidden')}
 function hide(){overlay.classList.add('hidden')}
 function start(){if(won){reset();won=false}if(!running&&player.hp<=0)reset(false);running=true;paused=false;pressed.clear();hide()}
 document.querySelector('#play').onclick=start;document.querySelector('#restart').onclick=()=>{reset();running=true;paused=false;won=false;hide()};document.querySelector('#sound').onclick=()=>{sound=!sound;document.querySelector('#sound').textContent=sound?'♪ Ljud: på':'♪ Ljud: av'};
-window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();if(!keys.has(e.code))pressed.add(e.code);keys.add(e.code);if(['KeyP','Escape'].includes(e.code)&&!e.repeat){if(running){paused=!paused;if(paused)show('Paus','Ta en liten paus. Parken väntar på dig.','Fortsätt →');else hide()}}});window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{keys.clear();pressed.clear();if(running&&!paused){paused=true;show('Paus','Spelet pausades när fönstret tappade fokus.','Fortsätt →')}});
+window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();if(!keys.has(e.code))pressed.add(e.code);keys.add(e.code);if(e.code==='F3'&&!e.repeat){e.preventDefault();debugArt=!debugArt}if(['KeyP','Escape'].includes(e.code)&&!e.repeat){if(running){paused=!paused;if(paused)show('Paus','Ta en liten paus. Parken väntar på dig.','Fortsätt →');else hide()}}});window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{keys.clear();pressed.clear();if(running&&!paused){paused=true;show('Paus','Spelet pausades när fönstret tappade fokus.','Fortsätt →')}});
 const held=(...a)=>a.some(k=>keys.has(k)),tap=(...a)=>a.some(k=>pressed.has(k));
 let audio;function beep(freq=440,dur=.08,type='sine'){if(!sound)return;try{audio??=new (window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,audio.currentTime);o.frequency.exponentialRampToValueAtTime(Math.max(70,freq*.7),audio.currentTime+dur);g.gain.setValueAtTime(.035,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+dur)}catch{}}
 function overlap(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
 function burst(x,y,color,n=9){for(let i=0;i<n;i++)particles.push({x,y,vx:(Math.random()-.5)*7,vy:-Math.random()*5-1,life:35+Math.random()*20,color})}
 function hurt(){if(player.inv)return;player.hp=Math.max(0,player.hp-18);player.inv=70;player.vy=-7;player.vx=-player.face*5;burst(player.x+15,player.y+22,'#ffb6a4');beep(170,.19,'sawtooth');if(player.hp<=0){running=false;show('Energin tog slut!','Du kan försöka igen från den senaste kontrollpunkten.','Försök igen →')}}
-function update(dt){tick+=dt;motionTime+=dt;landSquash=Math.max(0,landSquash-dt*0.22);jumpLift=Math.max(0,jumpLift-dt*0.18);visitedSections.add(Math.min(11,Math.floor(player.x/(WORLD/12))));const p=player;const dir=(held('ArrowRight','KeyD')?1:0)-(held('ArrowLeft','KeyA')?1:0);p.crouch=held('ArrowDown','KeyS')&&p.ground;p.attack=Math.max(0,p.attack-dt);p.attackCD=Math.max(0,p.attackCD-dt);p.inv=Math.max(0,p.inv-dt);if(p.spin&&!p.ground)p.spinClock+=dt;coyote=p.ground?7:Math.max(0,coyote-dt);jumpBuffer=Math.max(0,jumpBuffer-dt);if(tap('Space','KeyW','ArrowUp'))jumpBuffer=8;
+function update(dt){tick+=dt;motionTime+=dt;landSquash=Math.max(0,landSquash-dt*0.22);jumpLift=Math.max(0,jumpLift-dt*0.18);visitedSections.add(Math.min(11,Math.floor(player.x/(WORLD/12))));const p=player;const dir=(held('ArrowRight','KeyD')?1:0)-(held('ArrowLeft','KeyA')?1:0);p.crouch=held('ArrowDown','KeyS')&&p.ground;p.attack=Math.max(0,p.attack-dt);p.attackCD=Math.max(0,p.attackCD-dt);p.inv=Math.max(0,p.inv-dt);
+if(p.landTimer>0){p.landClock+=dt;p.landTimer=Math.max(0,p.landTimer-dt)}
+if(p.spin&&!p.ground)p.spinClock+=dt;coyote=p.ground?7:Math.max(0,coyote-dt);jumpBuffer=Math.max(0,jumpBuffer-dt);if(tap('Space','KeyW','ArrowUp'))jumpBuffer=8;
 if(dir)p.face=dir;
-if(jumpBuffer>0&&coyote>0&&!p.crouch){p.vy=-13.7;p.ground=false;coyote=0;jumpBuffer=0;jumpLift=1;p.spin=(dir!==0);p.spinClock=0;beep(480,.1)}
+if(jumpBuffer>0&&coyote>0&&!p.crouch){p.vy=-13.7;p.ground=false;p.airAge=0;coyote=0;jumpBuffer=0;jumpLift=1;p.landTimer=0;p.landClock=0;p.spin=(dir!==0);p.spinClock=0;beep(480,.1)}
 if(!held('Space','KeyW','ArrowUp')&&p.vy< -4)p.vy+=.52*dt;
 if(tap('KeyJ','KeyX')&&!p.attackCD&&!p.crouch){p.attack=13;p.attackCD=22;beep(720,.09,'triangle')}
-p.vx+=(dir*(p.crouch?1.35:(held('ShiftLeft','ShiftRight')?5.95:3.75))-p.vx)*Math.min(1,(held('ShiftLeft','ShiftRight')?0.24:0.2)*dt);
-const oldY=p.y,wasGrounded=p.ground,oldX=p.x;p.x=Math.max(0,Math.min(WORLD-p.w,p.x+p.vx*dt));if(wasGrounded&&!p.crouch)stepDistance+=Math.abs(p.x-oldX);p.vy=Math.min(17,p.vy+.66*dt);p.y+=p.vy*dt;p.ground=false;
+const oldVX=p.vx;p.vx+=(dir*(p.crouch?1.35:(held('ShiftLeft','ShiftRight')?5.95:3.75))-p.vx)*Math.min(1,(held('ShiftLeft','ShiftRight')?0.24:0.2)*dt);p.accel+=(p.vx-oldVX-p.accel)*Math.min(1,0.32*dt);
+const oldY=p.y,wasGrounded=p.ground,oldX=p.x;p.x=Math.max(0,Math.min(WORLD-p.w,p.x+p.vx*dt));if(wasGrounded&&!p.crouch){const dist=Math.abs(p.x-oldX);stepDistance+=dist;p.gaitPhase=advanceGait(p.gaitPhase,dist,Math.abs(p.vx)>4.35)}p.vy=Math.min(17,p.vy+.66*dt);const impactVy=p.vy;p.y+=p.vy*dt;p.ground=false;
 for(const plat of platforms){if(p.x+p.w>plat.x+5&&p.x<plat.x+plat.w-5&&oldY+p.h<=plat.y+8&&p.y+p.h>=plat.y&&p.vy>=0){p.y=plat.y-p.h;p.vy=0;p.ground=true}}
 // Ground dust is tied to actual travel, so shoes don't throw out particles while idle.
 if(p.ground&&!p.crouch&&Math.abs(p.vx)>1.3){
@@ -71,16 +77,18 @@ if(p.ground&&!p.crouch&&Math.abs(p.vx)>1.3){
  }
 }
 if(!wasGrounded&&p.ground&&p.vy===0){
- p.spin=false;p.spinClock=0;
- landSquash=1;
+ p.spin=false;p.spinClock=0;p.airAge=0;
+ if(impactVy>2.8){p.landDuration=Math.abs(p.vx)>1.1?6:10;p.landTimer=p.landDuration;p.landClock=0;}
+ landSquash=Math.min(1,impactVy/12);
  for(let i=0;i<9;i++)particles.push({x:p.x+p.w/2+(Math.random()-.5)*28,y:p.y+p.h-3,vx:(Math.random()-.5)*3,vy:-Math.random()*2.8-.3,life:18+Math.random()*10,color:'#e7e0c4',dust:true});
 }
-if(p.y>H+100){p.hp=Math.max(0,p.hp-25);p.x=checkpoint;p.y=230;p.vx=0;p.vy=0;p.inv=75;p.spin=false;p.spinClock=0;if(p.hp<=0){running=false;show('Energin tog slut!','Försök igen från kontrollpunkten.','Försök igen →')}beep(180,.2)}
+if(!p.ground)p.airAge+=dt;
+if(p.y>H+100){p.hp=Math.max(0,p.hp-25);p.x=checkpoint;p.y=230;p.vx=0;p.vy=0;p.inv=75;p.spin=false;p.spinClock=0;p.airAge=0;p.landTimer=0;p.landClock=0;if(p.hp<=0){running=false;show('Energin tog slut!','Försök igen från kontrollpunkten.','Försök igen →')}beep(180,.2)}
 for(const item of items){if(item.taken)continue;const dx=p.x+p.w/2-item.x,dy=p.y+p.h/2-item.y;if(dx*dx+dy*dy<35*35){item.taken=true;p.hp=Math.min(99,p.hp+15);score++;burst(item.x,item.y,'#ffdb69',13);beep(950,.13)}}
 for(const e of enemies){if(!e.alive)continue;e.x+=e.dir*1.25*dt;if(e.x<e.min||e.x>e.max)e.dir*=-1;if(p.attack>0){const slash={x:p.face>0?p.x+p.w-2:p.x-58,y:p.y+5,w:60,h:48};if(overlap(slash,e)){e.alive=false;burst(e.x+18,e.y+12,'#9ae5d7',18);beep(620,.16,'square');continue}}if(overlap(p,e))hurt()}
 if(p.x>1920&&checkpoint<1900){checkpoint=1930;try{localStorage.setItem('stadsparken-checkpoint','1930')}catch{}burst(1940,390,'#9df4ff',25);beep(1050,.25)}
 if(p.x>WORLD-140){won=true;running=false;show('Banan avklarad! ✨',`Du hittade vägen genom Stadsparken och samlade ${score} av ${items.length} energikapslar. Nästa äventyr väntar i skolan!`,'Spela igen →');beep(1100,.4)}
-for(const q of particles){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=.18*dt;q.life-=dt}particles=particles.filter(q=>q.life>0);camera+=(Math.max(0,Math.min(WORLD-W,p.x-330))-camera)*Math.min(1,.085*dt);lastGround=p.ground;pressed.clear()}
+for(const q of particles){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=.18*dt;q.life-=dt}particles=particles.filter(q=>q.life>0);camera+=(Math.max(0,Math.min(WORLD-W,p.x-330))-camera)*Math.min(1,.085*dt);lastGround=p.ground;pressed.clear();advanceArtClock()}
 function rounded(x,y,w,h,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
 function line(points,color,width=2){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke()}
 function circle(x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
@@ -216,57 +224,42 @@ function drawEnemies(){
  ctx.restore();
 }
 // Precise foot-anchored 2D cutout animation. Physics collider remains independent of art.
+// One foot-anchored character renderer for all game states. Decision logic lives in animator.js.
+// Animation time advances only in the fixed 60Hz simulation, not every browser repaint.
+// This prevents 120Hz monitors from running sprites twice as fast as 60Hz displays.
+function advanceArtClock(){
+ const next=selectAction(player,player.landTimer,tick);
+ if(next!==heroPose){heroPose=next;heroPoseTime=0}else heroPoseTime++;
+}
 function hero(){
- const p=player,screenX=p.x-camera+p.w/2, footY=p.y+p.h;
- let action='idle';
- if(p.inv>0&&Math.floor(tick/6)%2)action='hurt';
- else if(p.attack>0)action='slash';
- else if(p.crouch)action='crouch';
- else if(!p.ground)action=p.vy<0?'jump':'fall';
- else if(Math.abs(p.vx)>4.35)action='run';
- else if(Math.abs(p.vx)>.35)action='walk';
- if(action!==heroPose){heroPose=action;heroPoseTime=0}
- else heroPoseTime+= (action==='walk'||action==='run')?Math.max(.4,Math.abs(p.vx)/3.2):1;
- const frames=animations[action];
- const delay={idle:11,walk:4.3,run:3.15,jump:5.5,fall:6,crouch:8,slash:2,hurt:5}[action];
- const strideBase=(action==='run'?128:104);
- const idx=(action==='slash')?Math.min(frames.length-1,Math.floor((13-p.attack)/(13/frames.length))):
-  (action==='walk'||action==='run')
-   ? Math.floor(stepDistance/strideBase*frames.length)%frames.length
-   : Math.floor(heroPoseTime/delay)%frames.length;
- const img=frames[Math.max(0,idx)];
- const phase=(action==='walk'||action==='run')?((stepDistance/strideBase)%1):0;
- const cycle=phase*Math.PI*2;
- const speed=Math.abs(p.vx);
- const moveFactor=Math.min(1,speed/(action==='run'?5.95:3.75));
- let bob=0, tilt=0, swayX=0, stretchY=1, stretchX=1, extraLift=0, rotation=0;
- if(action==='idle'){ bob=Math.sin(tick*0.05)*1.4; tilt=Math.sin(tick*0.025)*0.01; }
- if(action==='walk'){ bob=Math.sin(cycle*2)*2.6*moveFactor; tilt=Math.sin(cycle)*0.022*moveFactor; swayX=Math.cos(cycle)*1.6*moveFactor; }
- if(action==='run'){ bob=Math.sin(cycle*2)*4.2*moveFactor; tilt=0.09+Math.sin(cycle)*0.025; swayX=Math.cos(cycle)*2.2*moveFactor; extraLift=Math.max(0,Math.sin(cycle))*1.8; }
- if(action==='jump'){ bob=-4-jumpLift*3; tilt=-0.05*p.face; }
- if(action==='fall'){ bob=-1.2; tilt=0.03*p.face; }
- if(action==='crouch'){ bob=3; stretchY=.97; stretchX=1.04; }
- if(action==='slash'){ tilt=-0.045*p.face; swayX=2; }
- if(action==='hurt'){ bob=1.5; tilt=-0.06*p.face; }
- if(p.spin&&!p.ground){
-   rotation=p.face*(p.spinClock*0.30);
-   bob+=Math.sin(p.spinClock*0.23)*1.6;
-   stretchY*=1.01;
- }
- if(landSquash>0){ const s=landSquash; stretchY*=1-(0.12*s); stretchX*=1+(0.14*s); bob+=3.4*s; }
- ctx.save();ctx.translate(screenX+swayX,footY-bob-extraLift);ctx.scale(p.face*stretchX,stretchY);ctx.rotate(tilt*p.face + rotation);
- if(p.ground){ctx.fillStyle='#122b3340';ctx.beginPath();ctx.ellipse(0,1,28+moveFactor*3,4.7+(action==='run'?0.8:0),0,0,Math.PI*2);ctx.fill()}
- if(p.inv>0&&Math.floor(tick/4)%2)ctx.globalAlpha=.53;
- const drawH=(action==='walk'||action==='run')?160:157,drawW=(action==='walk'||action==='run')?136:125,footRatio=278/300;
- if(ready(img))ctx.drawImage(img,-drawW/2,-drawH*footRatio,drawW,drawH);
+ const p=player,screenX=p.x-camera+p.w/2,footY=p.y+p.h;
+ const action=heroPose;
+ const index=frameFor(action,p,heroPoseTime),frames=animations[action];
+ const img=frames[Math.max(0,Math.min(index,frames.length-1))];
+ artState=action;artFrame=index;
+ const {lean,stretchX,stretchY,shiftX}=artMotion(action,p,landSquash,heroPoseTime);
+ // The contact shadow belongs to the physical ground, never the rotating sprite.
+ if(p.ground){ctx.fillStyle='#122b3340';ctx.beginPath();ctx.ellipse(screenX,footY+1,28,4.5,0,0,Math.PI*2);ctx.fill()}
+ ctx.save();ctx.translate(screenX+shiftX,footY);ctx.scale(p.face*stretchX,stretchY);ctx.rotate(lean*p.face);
+ if(p.inv>0&&Math.floor(tick/4)%2)ctx.globalAlpha=.52;
+ // Exact same 220x220 image coordinate system for all frames; painted foot anchor at (110,205).
+ if(ready(img))ctx.drawImage(img,-110,-205,220,220);
  else{rounded(-17,-104,34,104,8,'#f5efe7');circle(0,-110,18,'#e9c05f')}
  if(p.attack>0){
    const progress=(13-p.attack)/13;
-   ctx.save();ctx.globalAlpha=.65*(1-progress);
-   ctx.strokeStyle='#d8f6ff';ctx.lineWidth=5;ctx.beginPath();
-   ctx.arc(20,-69,55,-1.65+progress*1.4,-.45+progress*1.4);ctx.stroke();ctx.restore();
+   ctx.save();ctx.globalAlpha=.55*(1-progress);ctx.strokeStyle='#d8f6ff';ctx.lineWidth=4;
+   ctx.beginPath();ctx.arc(20,-69,55,-1.65+progress*1.4,-.45+progress*1.4);ctx.stroke();ctx.restore();
  }
  ctx.restore();
+ if(debugArt){
+   ctx.save();ctx.strokeStyle='#fc77a4';ctx.lineWidth=2;
+   ctx.strokeRect(p.x-camera,p.y,p.w,p.h);
+   ctx.strokeStyle='#ffe7a1';ctx.beginPath();ctx.moveTo(screenX-13,footY);ctx.lineTo(screenX+13,footY);ctx.moveTo(screenX,footY-13);ctx.lineTo(screenX,footY+13);ctx.stroke();
+   rounded(13,149,276,65,8,'#123044ed');ctx.fillStyle='#fff3d5';ctx.font='bold 14px monospace';
+   ctx.fillText(`${action} · ruta ${index+1}/${frames.length}`,25,175);
+   ctx.font='12px monospace';ctx.fillText(`mark ${p.ground?'JA':'NEJ'} · fart ${p.vx.toFixed(1)} · fas ${(p.gaitPhase||0).toFixed(2)}`,25,195);
+   ctx.restore();
+ }
 }
 function effects(){for(const q of particles){
  ctx.globalAlpha=Math.min(1,q.life/(q.dust?28:15));
@@ -280,7 +273,7 @@ function hud(){
  // Original blonde hero's face appears on his HUD portrait.
  circle(63,56,41,'#172f42');circle(63,56,37,'#edc783');
  ctx.save();ctx.beginPath();ctx.arc(63,56,33,0,Math.PI*2);ctx.clip();
- if(ready(portrait))ctx.drawImage(portrait,78,20,89,83,29,20,68,72);
+ if(ready(portrait))ctx.drawImage(portrait,81,25,70,70,29,20,68,72);
  ctx.restore();
  ctx.fillStyle='#fff8df';ctx.font='bold 14px system-ui';ctx.fillText('ENERGI',118,36);
  rounded(117,47,212,17,8,'#1e3b4e');rounded(119,49,208*(player.hp/99),13,6,player.hp>30?'#87d782':'#f3a16f');
@@ -329,5 +322,17 @@ function ambient(){
  ctx.restore();
 }
 function render(){background();water();drawPlatforms();gardenArches();scenery();drawItems();drawEnemies();hero();effects();ambient();hud();minimap();ctx.fillStyle='#0e263cbb';ctx.fillRect(W-215,H-30,215,30);ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText(`Stadsparken · v${VERSION}`,W-195,H-11)}
-function loop(t){const dt=Math.min(2,(t-last)/16.666||1);last=t;if(running&&!paused)update(dt);render();requestAnimationFrame(loop)}
+// Deterministic 60Hz game simulation with a separate refresh-rate-independent render.
+// Cap long frame gaps to avoid tunneling; paused frames never accumulate hidden time.
+function loop(t){
+ if(!last)last=t;
+ const elapsed=Math.max(0,Math.min(100,t-last));last=t;
+ if(running&&!paused){
+   accumulator+=elapsed;
+   let n=0;
+   while(accumulator+0.0001>=FRAME_MS&&n<6){update(1);accumulator-=FRAME_MS;simFrames++;n++}
+   if(n===6)accumulator=0;
+ }else accumulator=0;
+ render();requestAnimationFrame(loop);
+}
 reset(false);try{if(localStorage.getItem('stadsparken-checkpoint')==='1930'){checkpoint=1930;player.x=1930}}catch{}requestAnimationFrame(loop);
