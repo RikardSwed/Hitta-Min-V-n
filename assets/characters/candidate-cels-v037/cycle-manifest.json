@@ -1,0 +1,138 @@
+{
+  "schema": 1,
+  "version": "v0.37",
+  "status": "art-only candidate, not included in published game",
+  "canvas": [
+    220,
+    220
+  ],
+  "footline_y": 205,
+  "frames": [
+    {
+      "index": 0,
+      "name": "walk_00",
+      "type": "approved",
+      "source": "assets/characters/production/walk_00.png",
+      "image": "assets/characters/candidate-cels-v037/cycle-preview/walk_00.png",
+      "bottom_shift": 0,
+      "bounds": [
+        62,
+        43,
+        155,
+        205
+      ],
+      "sha256": "1be6fe248d4b2dda31dee67dd2a97b041027a93e246446fb9ae6a5bdc51b1d81"
+    },
+    {
+      "index": 1,
+      "name": "walk_contact_A",
+      "type": "candidate",
+      "source": "assets/characters/candidate-cels-v037/walk_contact_A.png",
+      "image": "assets/characters/candidate-cels-v037/cycle-preview/walk_01.png",
+      "bottom_shift": 0,
+      "bounds": [
+        67,
+        44,
+        170,
+        205
+      ],
+      "sha256": "3aa79d9a07a047bae0777b03ba67a46fd8f51f7a3e64f078c4741395362b1c72"
+    },
+    {
+      "index": 2,
+      "name": "walk_02",
+      "type": "approved",
+      "source": "assets/characters/production/walk_02.png",
+      "image": "assets/characters/candidate-cels-v037/cycle-preview/walk_02.png",
+      "bottom_shift": 0,
+      "bounds": [
+        65,
+        42,
+        160,
+        205
+      ],
+      "sha256": "79bb3b202291284ee0ee4b059165b76eabfdb9c8b43da7c9bad279e8bd5216af"
+    },
+    {
+      "index": 3,
+      "name": "walk_passing_A",
+      "type": "candidate",
+      "source": "assets/characters/candidate-cels-v037/walk_passing_A.png",
+      "image": "assets/characters/candidate-cels-v037/cycle-preview/walk_03.png",
+      "bottom_shift": 2,
+      "bounds": [
+        79,
+        45,
+        170,
+        205
+      ],
+      "sha256": "0a970436dbadec032f689e1717ef28634b0cc6666b0b870d7e2b6121a1b52bb1"
+    },
+    {
+      "index": 4,
+      "name": "walk_04",
+      "type": "approved",
+      "source": "assets/characters/production/walk_04.png",
+      "image": "assets/characters/candidate-cels-v037/cycle-preview/walk_04.png",
+      "bottom_shift": 0,
+      "bounds": [
+        66,
+        42,
+        155,
+        205
+      ],
+      "sha256": "dc2929055f0175efac9680eac9a646023b289cf38dd9c3559be5deffd8849da0"
+    },
+    {
+      "index": 5,
+      "name": "walk_contact_B",
+      "type": "candidate",
+      "source": "assets/characters/candidate-cels-v037/walk_contact_B.png",
+      "image": "assets/characters/candidate-cels-v037/cycle-preview/walk_05.png",
+      "bottom_shift": 1,
+      "bounds": [
+        66,
+        44,
+        171,
+        205
+      ],
+      "sha256": "6c380133c691acf5d885abea38ba23dc9952a1502788b8133ebacd95fa42ee3f"
+    },
+    {
+      "index": 6,
+      "name": "walk_06",
+      "type": "approved",
+      "source": "assets/characters/production/walk_06.png",
+      "image": "assets/characters/candidate-cels-v037/cycle-preview/walk_06.png",
+      "bottom_shift": 0,
+      "bounds": [
+        71,
+        43,
+        169,
+        205
+      ],
+      "sha256": "7dce6fb7d01a2f2daeec6bb4212346ec3ae6dc0055844d2ffb64eb64e8a9adec"
+    },
+    {
+      "index": 7,
+      "name": "walk_passing_B",
+      "type": "candidate",
+      "source": "assets/characters/candidate-cels-v037/walk_passing_B.png",
+      "image": "assets/characters/candidate-cels-v037/cycle-preview/walk_07.png",
+      "bottom_shift": 2,
+      "bounds": [
+        83,
+        46,
+        168,
+        205
+      ],
+      "sha256": "2d59de8acdca0292dc36f50d8fb4ae8a8c8ccb3e8e0d9c9ded4f64effd325866"
+    }
+  ],
+  "notes": [
+    "4 original frames are unchanged; four SVG-based candidate frames have a textile shading pass inspired by approved source pixels.",
+    "Texture source: approved denim pixel colors; no unrelated clothes or new character design.",
+    "Normalising the footline does not create true plantar contact. Real movement preview needed.",
+    "Never overwrite game production/ graphics or js/game.js until visually approved."
+  ]
+}

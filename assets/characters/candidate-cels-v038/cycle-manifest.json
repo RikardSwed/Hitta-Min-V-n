@@ -1,0 +1,139 @@
+{
+  "version": "v0.38",
+  "status": "art-only candidate — no game JS or standard sprites modified",
+  "canvas": [
+    220,
+    220
+  ],
+  "footline_y": 205,
+  "frames": [
+    {
+      "index": 0,
+      "name": "walk_00",
+      "type": "approved",
+      "source": "assets/characters/production/walk_00.png",
+      "output": "assets/characters/candidate-cels-v038/cycle-preview/walk_00.png",
+      "sha256": "1be6fe248d4b2dda31dee67dd2a97b041027a93e246446fb9ae6a5bdc51b1d81",
+      "bottom_shift": 0,
+      "bbox": [
+        62,
+        43,
+        155,
+        205
+      ]
+    },
+    {
+      "index": 1,
+      "name": "walk_contact_A",
+      "type": "candidate",
+      "source": "assets/characters/candidate-cels-v038/walk_contact_A.png",
+      "output": "assets/characters/candidate-cels-v038/cycle-preview/walk_01.png",
+      "sha256": "f84a0e6b318a868c641ce5c7278f1692a7fc536a30ef34c1e8ef9e1518947fa0",
+      "bottom_shift": -4,
+      "bbox": [
+        67,
+        37,
+        170,
+        205
+      ]
+    },
+    {
+      "index": 2,
+      "name": "walk_02",
+      "type": "approved",
+      "source": "assets/characters/production/walk_02.png",
+      "output": "assets/characters/candidate-cels-v038/cycle-preview/walk_02.png",
+      "sha256": "79bb3b202291284ee0ee4b059165b76eabfdb9c8b43da7c9bad279e8bd5216af",
+      "bottom_shift": 0,
+      "bbox": [
+        65,
+        42,
+        160,
+        205
+      ]
+    },
+    {
+      "index": 3,
+      "name": "walk_passing_A",
+      "type": "candidate",
+      "source": "assets/characters/candidate-cels-v038/walk_passing_A.png",
+      "output": "assets/characters/candidate-cels-v038/cycle-preview/walk_03.png",
+      "sha256": "1714308f0c472b803fc269bc0040e8c37796cdf18076b594d64dc718fdd659d4",
+      "bottom_shift": -2,
+      "bbox": [
+        79,
+        37,
+        170,
+        205
+      ]
+    },
+    {
+      "index": 4,
+      "name": "walk_04",
+      "type": "approved",
+      "source": "assets/characters/production/walk_04.png",
+      "output": "assets/characters/candidate-cels-v038/cycle-preview/walk_04.png",
+      "sha256": "dc2929055f0175efac9680eac9a646023b289cf38dd9c3559be5deffd8849da0",
+      "bottom_shift": 0,
+      "bbox": [
+        66,
+        42,
+        155,
+        205
+      ]
+    },
+    {
+      "index": 5,
+      "name": "walk_contact_B",
+      "type": "candidate",
+      "source": "assets/characters/candidate-cels-v038/walk_contact_B.png",
+      "output": "assets/characters/candidate-cels-v038/cycle-preview/walk_05.png",
+      "sha256": "8c30f1e438c7f0675a1a9df843a51db15d69d46eabbf200b67448588dc16326b",
+      "bottom_shift": -3,
+      "bbox": [
+        66,
+        36,
+        171,
+        205
+      ]
+    },
+    {
+      "index": 6,
+      "name": "walk_06",
+      "type": "approved",
+      "source": "assets/characters/production/walk_06.png",
+      "output": "assets/characters/candidate-cels-v038/cycle-preview/walk_06.png",
+      "sha256": "7dce6fb7d01a2f2daeec6bb4212346ec3ae6dc0055844d2ffb64eb64e8a9adec",
+      "bottom_shift": 0,
+      "bbox": [
+        71,
+        43,
+        169,
+        205
+      ]
+    },
+    {
+      "index": 7,
+      "name": "walk_passing_B",
+      "type": "candidate",
+      "source": "assets/characters/candidate-cels-v038/walk_passing_B.png",
+      "output": "assets/characters/candidate-cels-v038/cycle-preview/walk_07.png",
+      "sha256": "f82e5f89d930280cef33ccc368f7fa24171ed494597390683f4e95a0eb193eb0",
+      "bottom_shift": -2,
+      "bbox": [
+        84,
+        38,
+        168,
+        205
+      ]
+    }
+  ],
+  "sources": {
+    "prior_manifest": "assets/characters/candidate-cels-v037/cycle-manifest.json"
+  },
+  "notes": [
+    "Four approved 100% unchanged original sprites and four art candidates.",
+    "Retouched pose uses manually masked original upper-body art + existing vector-shaped trouser legs with fabric texture.",
+    "No full-body pose is claimed to be newly hand-painted from scratch; approval pending."
+  ]
+}

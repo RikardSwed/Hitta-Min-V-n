@@ -1,0 +1,63 @@
+{
+  "version": "v0.37",
+  "status": "candidate-only",
+  "canvas": [
+    220,
+    220
+  ],
+  "method": "approved denim color sampled from original trouser pixels, clipped 27% opacity texture, posed crease glazes, unchanged shape/foot coordinates",
+  "frames": [
+    {
+      "name": "walk_contact_A",
+      "source": "assets/characters/candidate-cels-v036/walk_contact_A.svg",
+      "svg": "assets/characters/candidate-cels-v037/walk_contact_A.svg",
+      "png": "assets/characters/candidate-cels-v037/walk_contact_A.png",
+      "bounds": [
+        67,
+        44,
+        170,
+        205
+      ],
+      "sha256": "3aa79d9a07a047bae0777b03ba67a46fd8f51f7a3e64f078c4741395362b1c72"
+    },
+    {
+      "name": "walk_passing_A",
+      "source": "assets/characters/candidate-cels-v036/walk_passing_A.svg",
+      "svg": "assets/characters/candidate-cels-v037/walk_passing_A.svg",
+      "png": "assets/characters/candidate-cels-v037/walk_passing_A.png",
+      "bounds": [
+        79,
+        43,
+        170,
+        203
+      ],
+      "sha256": "2c7b618c0bccc0b8022817d8b76acf3adb417510c7a160f727c296c30ce7ea67"
+    },
+    {
+      "name": "walk_contact_B",
+      "source": "assets/characters/candidate-cels-v036/walk_contact_B.svg",
+      "svg": "assets/characters/candidate-cels-v037/walk_contact_B.svg",
+      "png": "assets/characters/candidate-cels-v037/walk_contact_B.png",
+      "bounds": [
+        66,
+        43,
+        171,
+        204
+      ],
+      "sha256": "ac580ae2930e4e9af9b5da381aba0fcfcb22cf7b6027e0e9eb52d5691afe84f3"
+    },
+    {
+      "name": "walk_passing_B",
+      "source": "assets/characters/candidate-cels-v036/walk_passing_B.svg",
+      "svg": "assets/characters/candidate-cels-v037/walk_passing_B.svg",
+      "png": "assets/characters/candidate-cels-v037/walk_passing_B.png",
+      "bounds": [
+        83,
+        44,
+        168,
+        203
+      ],
+      "sha256": "85a59b9a1c17fc0a402887198186ff2572f7940ca0e7a867f4fdecf431829d92"
+    }
+  ]
+}
