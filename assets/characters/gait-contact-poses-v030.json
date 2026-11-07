@@ -1,0 +1,23 @@
+{
+  "notes": "Hand-directed anchor positions for 8 distinct gait phases. x increases toward walking direction. All feet share collision floor y=205 when planted; unplanted feet are raised. These are rigged illustrations, not 16 separate hand drawings. Original sprites never overwritten.",
+  "walk": {"stride_pixels":72,"poses":[
+    {"label":"1 höger fot kontakt","ankle_x":148,"sole_y":205,"shoe_angle":-5,"body_x":-1,"body_y":-1,"torso_angle":-1.0},
+    {"label":"2 nedtryck och frånskjut","ankle_x":134,"sole_y":205,"shoe_angle":0,"body_x":0,"body_y":0,"torso_angle":0},
+    {"label":"3 passage, vänster ben lyfts","ankle_x":116,"sole_y":205,"shoe_angle":3,"body_x":1,"body_y":-2,"torso_angle":0.7},
+    {"label":"4 tåfrånskjut","ankle_x":99,"sole_y":205,"shoe_angle":9,"body_x":0,"body_y":-1,"torso_angle":1.1},
+    {"label":"5 vänster fot kontakt","ankle_x":87,"sole_y":205,"shoe_angle":-6,"body_x":-1,"body_y":-1,"torso_angle":-1.1},
+    {"label":"6 sving bakom kroppen","ankle_x":99,"sole_y":189,"shoe_angle":-12,"body_x":0,"body_y":0,"torso_angle":0.2},
+    {"label":"7 sving under kroppen","ankle_x":119,"sole_y":180,"shoe_angle":-7,"body_x":1,"body_y":-2,"torso_angle":1.1},
+    {"label":"8 fot lyfts mot nästa kontakt","ankle_x":140,"sole_y":191,"shoe_angle":-8,"body_x":0,"body_y":-1,"torso_angle":0.2}
+  ]},
+  "run": {"stride_pixels":88,"poses":[
+    {"label":"1 främre fot landar","ankle_x":153,"sole_y":205,"shoe_angle":-7,"body_x":-1,"body_y":1,"torso_angle":2.4},
+    {"label":"2 explosivt frånskjut","ankle_x":126,"sole_y":200,"shoe_angle":13,"body_x":0,"body_y":-2,"torso_angle":3.6},
+    {"label":"3 flygfas","ankle_x":94,"sole_y":181,"shoe_angle":-14,"body_x":2,"body_y":-5,"torso_angle":4.2},
+    {"label":"4 samlad flygfas","ankle_x":84,"sole_y":174,"shoe_angle":-15,"body_x":3,"body_y":-6,"torso_angle":3.8},
+    {"label":"5 bakre fot landar","ankle_x":85,"sole_y":185,"shoe_angle":-5,"body_x":-1,"body_y":1,"torso_angle":2.8},
+    {"label":"6 accelererar framåt","ankle_x":104,"sole_y":192,"shoe_angle":5,"body_x":0,"body_y":-2,"torso_angle":4.1},
+    {"label":"7 sving under kroppen","ankle_x":128,"sole_y":182,"shoe_angle":-7,"body_x":2,"body_y":-5,"torso_angle":3.5},
+    {"label":"8 förbereder nästa kontakt","ankle_x":153,"sole_y":194,"shoe_angle":-11,"body_x":0,"body_y":-3,"torso_angle":2.8}
+  ]}
+}

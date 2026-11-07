@@ -1,0 +1,637 @@
+{
+  "version": "0.34-draft",
+  "canvas": [
+    220,
+    220
+  ],
+  "foot_line_y": 205,
+  "description": "Artist pose keys; blue/red legs depict two alternating legs; these transparent overlays are guides, NOT finished game character art.",
+  "walk": [
+    {
+      "index": 0,
+      "phase_name": "Kontakt · A fram",
+      "contact": "A",
+      "hip": [
+        114,
+        142
+      ],
+      "leg_A": {
+        "knee": [
+          130,
+          164
+        ],
+        "ankle": [
+          146,
+          194
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          97,
+          165
+        ],
+        "ankle": [
+          82,
+          195
+        ]
+      },
+      "hands": {
+        "near": [
+          109,
+          142
+        ],
+        "far": [
+          147,
+          135
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "phase_name": "Tyngd ned",
+      "contact": "A",
+      "hip": [
+        114,
+        147
+      ],
+      "leg_A": {
+        "knee": [
+          126,
+          169
+        ],
+        "ankle": [
+          137,
+          194
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          99,
+          170
+        ],
+        "ankle": [
+          88,
+          187
+        ]
+      },
+      "hands": {
+        "near": [
+          104,
+          144
+        ],
+        "far": [
+          151,
+          135
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "phase_name": "Passage",
+      "contact": "A",
+      "hip": [
+        114,
+        144
+      ],
+      "leg_A": {
+        "knee": [
+          114,
+          168
+        ],
+        "ankle": [
+          115,
+          195
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          105,
+          166
+        ],
+        "ankle": [
+          102,
+          184
+        ]
+      },
+      "hands": {
+        "near": [
+          114,
+          139
+        ],
+        "far": [
+          141,
+          140
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "phase_name": "Lyft",
+      "contact": "A",
+      "hip": [
+        114,
+        140
+      ],
+      "leg_A": {
+        "knee": [
+          108,
+          167
+        ],
+        "ankle": [
+          99,
+          194
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          123,
+          163
+        ],
+        "ankle": [
+          135,
+          182
+        ]
+      },
+      "hands": {
+        "near": [
+          128,
+          137
+        ],
+        "far": [
+          126,
+          144
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "phase_name": "Kontakt · B fram",
+      "contact": "B",
+      "hip": [
+        114,
+        142
+      ],
+      "leg_A": {
+        "knee": [
+          97,
+          165
+        ],
+        "ankle": [
+          82,
+          195
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          130,
+          164
+        ],
+        "ankle": [
+          146,
+          194
+        ]
+      },
+      "hands": {
+        "near": [
+          143,
+          135
+        ],
+        "far": [
+          107,
+          142
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "phase_name": "Tyngd ned",
+      "contact": "B",
+      "hip": [
+        114,
+        147
+      ],
+      "leg_A": {
+        "knee": [
+          99,
+          170
+        ],
+        "ankle": [
+          88,
+          187
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          126,
+          169
+        ],
+        "ankle": [
+          137,
+          194
+        ]
+      },
+      "hands": {
+        "near": [
+          151,
+          135
+        ],
+        "far": [
+          104,
+          144
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "phase_name": "Passage",
+      "contact": "B",
+      "hip": [
+        114,
+        144
+      ],
+      "leg_A": {
+        "knee": [
+          105,
+          166
+        ],
+        "ankle": [
+          102,
+          184
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          114,
+          168
+        ],
+        "ankle": [
+          115,
+          195
+        ]
+      },
+      "hands": {
+        "near": [
+          141,
+          140
+        ],
+        "far": [
+          114,
+          139
+        ]
+      }
+    },
+    {
+      "index": 7,
+      "phase_name": "Lyft",
+      "contact": "B",
+      "hip": [
+        114,
+        140
+      ],
+      "leg_A": {
+        "knee": [
+          123,
+          163
+        ],
+        "ankle": [
+          135,
+          182
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          108,
+          167
+        ],
+        "ankle": [
+          99,
+          194
+        ]
+      },
+      "hands": {
+        "near": [
+          126,
+          144
+        ],
+        "far": [
+          128,
+          137
+        ]
+      }
+    }
+  ],
+  "run": [
+    {
+      "index": 0,
+      "phase_name": "Markkontakt · A",
+      "contact": "A",
+      "hip": [
+        116,
+        139
+      ],
+      "leg_A": {
+        "knee": [
+          137,
+          161
+        ],
+        "ankle": [
+          151,
+          195
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          93,
+          166
+        ],
+        "ankle": [
+          79,
+          180
+        ]
+      },
+      "hands": {
+        "near": [
+          100,
+          123
+        ],
+        "far": [
+          154,
+          116
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "phase_name": "Frånskjut",
+      "contact": "A",
+      "hip": [
+        116,
+        135
+      ],
+      "leg_A": {
+        "knee": [
+          132,
+          165
+        ],
+        "ankle": [
+          128,
+          193
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          94,
+          161
+        ],
+        "ankle": [
+          83,
+          169
+        ]
+      },
+      "hands": {
+        "near": [
+          106,
+          126
+        ],
+        "far": [
+          150,
+          120
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "phase_name": "Sväv",
+      "contact": "",
+      "hip": [
+        116,
+        131
+      ],
+      "leg_A": {
+        "knee": [
+          107,
+          156
+        ],
+        "ankle": [
+          99,
+          183
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          132,
+          151
+        ],
+        "ankle": [
+          145,
+          180
+        ]
+      },
+      "hands": {
+        "near": [
+          125,
+          120
+        ],
+        "far": [
+          121,
+          127
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "phase_name": "Framföring",
+      "contact": "",
+      "hip": [
+        116,
+        132
+      ],
+      "leg_A": {
+        "knee": [
+          100,
+          151
+        ],
+        "ankle": [
+          85,
+          169
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          135,
+          161
+        ],
+        "ankle": [
+          151,
+          185
+        ]
+      },
+      "hands": {
+        "near": [
+          150,
+          114
+        ],
+        "far": [
+          99,
+          129
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "phase_name": "Markkontakt · B",
+      "contact": "B",
+      "hip": [
+        116,
+        139
+      ],
+      "leg_A": {
+        "knee": [
+          93,
+          166
+        ],
+        "ankle": [
+          79,
+          180
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          137,
+          161
+        ],
+        "ankle": [
+          151,
+          195
+        ]
+      },
+      "hands": {
+        "near": [
+          154,
+          116
+        ],
+        "far": [
+          100,
+          123
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "phase_name": "Frånskjut",
+      "contact": "B",
+      "hip": [
+        116,
+        135
+      ],
+      "leg_A": {
+        "knee": [
+          94,
+          161
+        ],
+        "ankle": [
+          83,
+          169
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          132,
+          165
+        ],
+        "ankle": [
+          128,
+          193
+        ]
+      },
+      "hands": {
+        "near": [
+          150,
+          120
+        ],
+        "far": [
+          106,
+          126
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "phase_name": "Sväv",
+      "contact": "",
+      "hip": [
+        116,
+        131
+      ],
+      "leg_A": {
+        "knee": [
+          132,
+          151
+        ],
+        "ankle": [
+          145,
+          180
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          107,
+          156
+        ],
+        "ankle": [
+          99,
+          183
+        ]
+      },
+      "hands": {
+        "near": [
+          121,
+          127
+        ],
+        "far": [
+          125,
+          120
+        ]
+      }
+    },
+    {
+      "index": 7,
+      "phase_name": "Framföring",
+      "contact": "",
+      "hip": [
+        116,
+        132
+      ],
+      "leg_A": {
+        "knee": [
+          135,
+          161
+        ],
+        "ankle": [
+          151,
+          185
+        ]
+      },
+      "leg_B": {
+        "knee": [
+          100,
+          151
+        ],
+        "ankle": [
+          85,
+          169
+        ]
+      },
+      "hands": {
+        "near": [
+          99,
+          129
+        ],
+        "far": [
+          150,
+          114
+        ]
+      }
+    }
+  ]
+}

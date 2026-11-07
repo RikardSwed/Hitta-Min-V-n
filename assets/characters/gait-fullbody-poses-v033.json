@@ -1,0 +1,203 @@
+{
+  "description": "v0.33 art-directed upper-body offsets per frame for the approved blond boy. These are painted-source warps, not freshly hand-drawn full-body cels. Edit numbers and run tools/build_fullbody_gait_v033.py.",
+  "walk": {
+    "poses": [
+      {
+        "near_dx": 0.0,
+        "near_dy": 0.0,
+        "far_dx": 1.65,
+        "far_dy": 0.0,
+        "head_dx": -1.7,
+        "head_dy": 0.0,
+        "chest": 1,
+        "shoulder": 0.0,
+        "chest_turn": -0.4,
+        "body_angle": 0.25
+      },
+      {
+        "near_dx": -3.5,
+        "near_dy": 1.45,
+        "far_dx": 3.3,
+        "far_dy": -1.55,
+        "head_dx": -1.7,
+        "head_dy": 1.2,
+        "chest": 1,
+        "shoulder": 1.4,
+        "chest_turn": 0.2,
+        "body_angle": 0
+      },
+      {
+        "near_dx": -5.25,
+        "near_dy": 2.9,
+        "far_dx": 0.0,
+        "far_dy": -1.55,
+        "head_dx": 0.0,
+        "head_dy": 0.0,
+        "chest": -1,
+        "shoulder": 1.4,
+        "chest_turn": 0.65,
+        "body_angle": -0.4
+      },
+      {
+        "near_dx": 0.0,
+        "near_dy": 0.0,
+        "far_dx": -3.3,
+        "far_dy": 0.0,
+        "head_dx": 1.7,
+        "head_dy": -1.2,
+        "chest": -2,
+        "shoulder": 0.0,
+        "chest_turn": 0.2,
+        "body_angle": -0.2
+      },
+      {
+        "near_dx": 3.5,
+        "near_dy": -1.45,
+        "far_dx": -1.65,
+        "far_dy": 1.55,
+        "head_dx": 1.7,
+        "head_dy": 0.0,
+        "chest": 1,
+        "shoulder": -1.4,
+        "chest_turn": -0.4,
+        "body_angle": 0.25
+      },
+      {
+        "near_dx": 5.25,
+        "near_dy": -2.9,
+        "far_dx": 0.0,
+        "far_dy": 3.1,
+        "head_dx": 0.0,
+        "head_dy": 1.2,
+        "chest": 1,
+        "shoulder": -1.4,
+        "chest_turn": -0.2,
+        "body_angle": 0
+      },
+      {
+        "near_dx": 1.75,
+        "near_dy": 0.0,
+        "far_dx": 3.3,
+        "far_dy": 0.0,
+        "head_dx": -1.7,
+        "head_dy": 0.0,
+        "chest": -1,
+        "shoulder": 0.0,
+        "chest_turn": 0.5,
+        "body_angle": -0.4
+      },
+      {
+        "near_dx": -1.75,
+        "near_dy": 1.45,
+        "far_dx": 1.65,
+        "far_dy": -1.55,
+        "head_dx": -1.7,
+        "head_dy": -1.2,
+        "chest": -2,
+        "shoulder": 0.0,
+        "chest_turn": 0,
+        "body_angle": 0
+      }
+    ]
+  },
+  "run": {
+    "poses": [
+      {
+        "near_dx": -1.75,
+        "near_dy": 1.45,
+        "far_dx": 3.3,
+        "far_dy": 0.0,
+        "head_dx": -1.7,
+        "head_dy": 1.2,
+        "chest": 1,
+        "shoulder": 1.4,
+        "chest_turn": 0.2,
+        "body_angle": 0.3
+      },
+      {
+        "near_dx": -5.25,
+        "near_dy": 0.0,
+        "far_dx": 6.6,
+        "far_dy": -3.1,
+        "head_dx": 0.0,
+        "head_dy": 0.0,
+        "chest": -1,
+        "shoulder": 2.8,
+        "chest_turn": 0.7,
+        "body_angle": 0
+      },
+      {
+        "near_dx": 1.75,
+        "near_dy": -2.9,
+        "far_dx": 0.0,
+        "far_dy": -1.55,
+        "head_dx": 1.7,
+        "head_dy": -2.4,
+        "chest": -2,
+        "shoulder": 0.0,
+        "chest_turn": 0.2,
+        "body_angle": -0.5
+      },
+      {
+        "near_dx": 7.0,
+        "near_dy": -1.45,
+        "far_dx": -4.949999999999999,
+        "far_dy": 1.55,
+        "head_dx": 3.4,
+        "head_dy": -1.2,
+        "chest": 0,
+        "shoulder": -2.8,
+        "chest_turn": -0.6,
+        "body_angle": -0.2
+      },
+      {
+        "near_dx": 1.75,
+        "near_dy": 1.45,
+        "far_dx": 3.3,
+        "far_dy": 0.0,
+        "head_dx": -1.7,
+        "head_dy": 1.2,
+        "chest": 1,
+        "shoulder": 1.4,
+        "chest_turn": 0.2,
+        "body_angle": 0.3
+      },
+      {
+        "near_dx": -5.25,
+        "near_dy": 0.0,
+        "far_dx": 6.6,
+        "far_dy": -3.1,
+        "head_dx": 0.0,
+        "head_dy": 0.0,
+        "chest": -1,
+        "shoulder": 2.8,
+        "chest_turn": 0.7,
+        "body_angle": 0
+      },
+      {
+        "near_dx": 1.75,
+        "near_dy": -2.9,
+        "far_dx": 0.0,
+        "far_dy": -1.55,
+        "head_dx": 1.7,
+        "head_dy": -2.4,
+        "chest": -2,
+        "shoulder": 0.0,
+        "chest_turn": 0.2,
+        "body_angle": -0.5
+      },
+      {
+        "near_dx": 7.0,
+        "near_dy": -1.45,
+        "far_dx": -4.949999999999999,
+        "far_dy": 1.55,
+        "head_dx": 3.4,
+        "head_dy": -1.2,
+        "chest": 0,
+        "shoulder": -2.8,
+        "chest_turn": -0.6,
+        "body_angle": -0.2
+      }
+    ]
+  }
+}

@@ -1,0 +1,221 @@
+{
+  "notes": "v0.32 16 separately authored pose silhouettes, knee/foot/crease values editable for each. Reuses approved head, jacket, gloves and shoes. Not 16 fully hand-painted unique character frames.",
+  "walk": {
+    "stride_pixels": 72,
+    "poses": [
+      {
+        "label": "1 höger fot kontakt",
+        "ankle_x": 148,
+        "sole_y": 205,
+        "shoe_angle": -5,
+        "body_x": -1,
+        "body_y": -1,
+        "torso_angle": -1.0,
+        "knee_x": 134,
+        "knee_y": 166,
+        "fold": 0,
+        "crease_offset": -2
+      },
+      {
+        "label": "2 nedtryck och frånskjut",
+        "ankle_x": 134,
+        "sole_y": 205,
+        "shoe_angle": 0,
+        "body_x": 0,
+        "body_y": 0,
+        "torso_angle": 0,
+        "knee_x": 129,
+        "knee_y": 164,
+        "fold": -1,
+        "crease_offset": 1
+      },
+      {
+        "label": "3 passage, vänster ben lyfts",
+        "ankle_x": 116,
+        "sole_y": 205,
+        "shoe_angle": 3,
+        "body_x": 1,
+        "body_y": -2,
+        "torso_angle": 0.7,
+        "knee_x": 121,
+        "knee_y": 163,
+        "fold": 1,
+        "crease_offset": -1
+      },
+      {
+        "label": "4 tåfrånskjut",
+        "ankle_x": 99,
+        "sole_y": 205,
+        "shoe_angle": 9,
+        "body_x": 0,
+        "body_y": -1,
+        "torso_angle": 1.1,
+        "knee_x": 109,
+        "knee_y": 164,
+        "fold": 2,
+        "crease_offset": 2
+      },
+      {
+        "label": "5 vänster fot kontakt",
+        "ankle_x": 87,
+        "sole_y": 205,
+        "shoe_angle": -6,
+        "body_x": -1,
+        "body_y": -1,
+        "torso_angle": -1.1,
+        "knee_x": 100,
+        "knee_y": 167,
+        "fold": 0,
+        "crease_offset": -2
+      },
+      {
+        "label": "6 sving bakom kroppen",
+        "ankle_x": 99,
+        "sole_y": 189,
+        "shoe_angle": -12,
+        "body_x": 0,
+        "body_y": 0,
+        "torso_angle": 0.2,
+        "knee_x": 117,
+        "knee_y": 166,
+        "fold": -2,
+        "crease_offset": 1
+      },
+      {
+        "label": "7 sving under kroppen",
+        "ankle_x": 119,
+        "sole_y": 180,
+        "shoe_angle": -7,
+        "body_x": 1,
+        "body_y": -2,
+        "torso_angle": 1.1,
+        "knee_x": 139,
+        "knee_y": 157,
+        "fold": 1,
+        "crease_offset": 0
+      },
+      {
+        "label": "8 fot lyfts mot nästa kontakt",
+        "ankle_x": 140,
+        "sole_y": 191,
+        "shoe_angle": -8,
+        "body_x": 0,
+        "body_y": -1,
+        "torso_angle": 0.2,
+        "knee_x": 145,
+        "knee_y": 158,
+        "fold": 0,
+        "crease_offset": 2
+      }
+    ]
+  },
+  "run": {
+    "stride_pixels": 88,
+    "poses": [
+      {
+        "label": "1 främre fot landar",
+        "ankle_x": 153,
+        "sole_y": 205,
+        "shoe_angle": -7,
+        "body_x": -1,
+        "body_y": 1,
+        "torso_angle": 2.4,
+        "knee_x": 135,
+        "knee_y": 163,
+        "fold": 0,
+        "crease_offset": -2
+      },
+      {
+        "label": "2 explosivt frånskjut",
+        "ankle_x": 126,
+        "sole_y": 200,
+        "shoe_angle": 13,
+        "body_x": 0,
+        "body_y": -2,
+        "torso_angle": 3.6,
+        "knee_x": 141,
+        "knee_y": 160,
+        "fold": -1,
+        "crease_offset": 1
+      },
+      {
+        "label": "3 flygfas",
+        "ankle_x": 94,
+        "sole_y": 181,
+        "shoe_angle": -14,
+        "body_x": 2,
+        "body_y": -5,
+        "torso_angle": 4.2,
+        "knee_x": 112,
+        "knee_y": 161,
+        "fold": 1,
+        "crease_offset": -1
+      },
+      {
+        "label": "4 samlad flygfas",
+        "ankle_x": 84,
+        "sole_y": 174,
+        "shoe_angle": -15,
+        "body_x": 3,
+        "body_y": -6,
+        "torso_angle": 3.8,
+        "knee_x": 112,
+        "knee_y": 161,
+        "fold": 2,
+        "crease_offset": 2
+      },
+      {
+        "label": "5 bakre fot landar",
+        "ankle_x": 85,
+        "sole_y": 185,
+        "shoe_angle": -5,
+        "body_x": -1,
+        "body_y": 1,
+        "torso_angle": 2.8,
+        "knee_x": 112,
+        "knee_y": 171,
+        "fold": 0,
+        "crease_offset": -2
+      },
+      {
+        "label": "6 accelererar framåt",
+        "ankle_x": 104,
+        "sole_y": 192,
+        "shoe_angle": 5,
+        "body_x": 0,
+        "body_y": -2,
+        "torso_angle": 4.1,
+        "knee_x": 123,
+        "knee_y": 165,
+        "fold": -2,
+        "crease_offset": 1
+      },
+      {
+        "label": "7 sving under kroppen",
+        "ankle_x": 128,
+        "sole_y": 182,
+        "shoe_angle": -7,
+        "body_x": 2,
+        "body_y": -5,
+        "torso_angle": 3.5,
+        "knee_x": 141,
+        "knee_y": 153,
+        "fold": 1,
+        "crease_offset": 0
+      },
+      {
+        "label": "8 förbereder nästa kontakt",
+        "ankle_x": 153,
+        "sole_y": 194,
+        "shoe_angle": -11,
+        "body_x": 0,
+        "body_y": -3,
+        "torso_angle": 2.8,
+        "knee_x": 151,
+        "knee_y": 155,
+        "fold": 0,
+        "crease_offset": 2
+      }
+    ]
+  }
+}
