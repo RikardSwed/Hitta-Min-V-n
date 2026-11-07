@@ -1,0 +1,38 @@
+{
+  "canvas": [
+    220,
+    220
+  ],
+  "baseline": 205,
+  "counts": {
+    "idle": 8,
+    "walk": 8,
+    "run": 8,
+    "jump": 4,
+    "spin": 4,
+    "crouch": 2,
+    "slash": 3,
+    "land": 5,
+    "hurt": 1,
+    "spinair": 8
+  },
+  "source": "approved animeringsblad_för_blond_hjälte.png",
+  "status": "Work in progress. Eight frames per gait, only four individually painted originals. Eight derived middle frames across walk/run. No automatically blended doubles.",
+  "processing": "Four approved, individually illustrated key poses per gait remain unchanged; four NEW rigged middle frames per gait use a deterministic, premultiplied-alpha single-source limb displacement with strict sole baseline. Code: tools/build_joint_guided_poses_v023.py.",
+  "version": "0.24.0",
+  "walk_run_keyposes": 4,
+  "walk_stride_px": 72,
+  "run_stride_px": 88,
+  "limitations": "Not yet eight independently illustrated poses. A future artist pass should make authentic side-view contact/passing frames with opposing arm swings.",
+  "land_stages": [
+    "kontakt",
+    "absorbera",
+    "resning",
+    "stilla-utgång",
+    "rörlig-utgång"
+  ],
+  "land_animation_source": "Approved illustrated land, crouch, idle and walk poses reused as 5 stage variants; not five newly hand-drawn frames.",
+  "walk_run_derived_frames": 4,
+  "idle_status": "8 digital breathing frames from ONE approved original; lower body and shoe pixels identical; not eight independent illustrations.",
+  "idle_original_backup": "assets/characters/approved-idle-original-v023.png"
+}
