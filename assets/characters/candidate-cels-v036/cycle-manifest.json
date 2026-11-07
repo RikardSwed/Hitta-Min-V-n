@@ -1,0 +1,154 @@
+{
+  "schema": 1,
+  "version": "v0.36",
+  "status": "candidate only, not used in game",
+  "canvas": [
+    220,
+    220
+  ],
+  "footline_y": 205,
+  "sources": [
+    "assets/characters/production/walk_00.png",
+    "assets/characters/production/walk_02.png",
+    "assets/characters/production/walk_04.png",
+    "assets/characters/production/walk_06.png",
+    "assets/characters/candidate-cels-v035/walk_contact_A.png",
+    "assets/characters/candidate-cels-v035/walk_passing_A.png"
+  ],
+  "frames": [
+    {
+      "index": 0,
+      "name": "walk_00",
+      "type": "approved",
+      "label": "Kontaktstart, målat original",
+      "image": "assets/characters/candidate-cels-v036/cycle-preview/walk_00.png",
+      "source": "assets/characters/production/walk_00.png",
+      "bottom_shift": 0,
+      "alpha_bounds": [
+        62,
+        43,
+        155,
+        205
+      ],
+      "sha256": "1be6fe248d4b2dda31dee67dd2a97b041027a93e246446fb9ae6a5bdc51b1d81"
+    },
+    {
+      "index": 1,
+      "name": "walk_contact_A",
+      "type": "candidate",
+      "label": "Fotkontakt A, ny byxkontur",
+      "image": "assets/characters/candidate-cels-v036/cycle-preview/walk_01.png",
+      "source": "assets/characters/candidate-cels-v036/walk_contact_A.png",
+      "bottom_shift": 0,
+      "alpha_bounds": [
+        67,
+        44,
+        170,
+        205
+      ],
+      "sha256": "587a41f76457fda1616f6e1c969ff3d72fff5495b4c10236d1af447d281e5b5f"
+    },
+    {
+      "index": 2,
+      "name": "walk_02",
+      "type": "approved",
+      "label": "Passagesteg, målat original",
+      "image": "assets/characters/candidate-cels-v036/cycle-preview/walk_02.png",
+      "source": "assets/characters/production/walk_02.png",
+      "bottom_shift": 0,
+      "alpha_bounds": [
+        65,
+        42,
+        160,
+        205
+      ],
+      "sha256": "79bb3b202291284ee0ee4b059165b76eabfdb9c8b43da7c9bad279e8bd5216af"
+    },
+    {
+      "index": 3,
+      "name": "walk_passing_A",
+      "type": "candidate",
+      "label": "Passage A, ny byxkontur",
+      "image": "assets/characters/candidate-cels-v036/cycle-preview/walk_03.png",
+      "source": "assets/characters/candidate-cels-v036/walk_passing_A.png",
+      "bottom_shift": 2,
+      "alpha_bounds": [
+        79,
+        45,
+        170,
+        205
+      ],
+      "sha256": "307db3f42c3ea0802582c01b368c00ae356654162c09c7d6400c4c9a5e6f0890"
+    },
+    {
+      "index": 4,
+      "name": "walk_04",
+      "type": "approved",
+      "label": "Motsatt fot, målat original",
+      "image": "assets/characters/candidate-cels-v036/cycle-preview/walk_04.png",
+      "source": "assets/characters/production/walk_04.png",
+      "bottom_shift": 0,
+      "alpha_bounds": [
+        66,
+        42,
+        155,
+        205
+      ],
+      "sha256": "dc2929055f0175efac9680eac9a646023b289cf38dd9c3559be5deffd8849da0"
+    },
+    {
+      "index": 5,
+      "name": "walk_contact_B",
+      "type": "candidate",
+      "label": "Fotkontakt B, ny byxkontur",
+      "image": "assets/characters/candidate-cels-v036/cycle-preview/walk_05.png",
+      "source": "assets/characters/candidate-cels-v036/walk_contact_B.png",
+      "bottom_shift": 1,
+      "alpha_bounds": [
+        66,
+        44,
+        171,
+        205
+      ],
+      "sha256": "e42972f8080f7a1d51475b1e3f9f5eb2d002d2ef1f2ad5b0b34603109b3f463e"
+    },
+    {
+      "index": 6,
+      "name": "walk_06",
+      "type": "approved",
+      "label": "Motsatt passage, målat original",
+      "image": "assets/characters/candidate-cels-v036/cycle-preview/walk_06.png",
+      "source": "assets/characters/production/walk_06.png",
+      "bottom_shift": 0,
+      "alpha_bounds": [
+        71,
+        43,
+        169,
+        205
+      ],
+      "sha256": "7dce6fb7d01a2f2daeec6bb4212346ec3ae6dc0055844d2ffb64eb64e8a9adec"
+    },
+    {
+      "index": 7,
+      "name": "walk_passing_B",
+      "type": "candidate",
+      "label": "Passage B, ny byxkontur",
+      "image": "assets/characters/candidate-cels-v036/cycle-preview/walk_07.png",
+      "source": "assets/characters/candidate-cels-v036/walk_passing_B.png",
+      "bottom_shift": 2,
+      "alpha_bounds": [
+        83,
+        46,
+        168,
+        205
+      ],
+      "sha256": "f5576ec87c1e9547898dade51f1e34777420221850abf9a75e01a67867c6a60a"
+    }
+  ],
+  "notes": [
+    "Kandidatcykel för animationstest; spelet använder godkända produktionssprites.",
+    "4 ursprungliga handillustrerade originalposer, 4 SVG-kandidater med målad överkropp och separat tecknade byx-/benformer.",
+    "B-poserna är individuellt formgivna vektorillustrationer, inte spegelvända A-poser.",
+    "Synlig konstnärlig söm mellan byxa och överkropp måste granskas."
+  ]
+}
