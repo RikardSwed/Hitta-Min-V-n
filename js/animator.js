@@ -5,12 +5,12 @@
  * No DOM or Canvas dependencies. Game physics never depends on animation frames.
  */
 export const FRAME_COUNTS=Object.freeze({
-  idle:1, walk:8, run:8, jump:4, fall:4, spin:8,
+  idle:8, walk:8, run:8, jump:4, fall:4, spin:8,
   crouch:2, slash:3, hurt:1, land:5,
 });
 
 export const FILE_PREFIX=Object.freeze({fall:'jump',spin:'spinair'});
-export const STANCE=Object.freeze({walkStride:72,runStride:88,spinFramesPerRevolution:24});
+export const STANCE=Object.freeze({walkStride:72,runStride:88,spinFramesPerRevolution:24,turnFrames:8});
 
 export function selectAction(p, landingTimer=0, tick=0){
   if(p.inv>0 && Math.floor(tick/6)%2) return 'hurt';
@@ -27,7 +27,8 @@ export function selectAction(p, landingTimer=0, tick=0){
 export function frameFor(action,p,elapsed=0){
   const n=FRAME_COUNTS[action]||1;
   const clamp=(v)=>Math.max(0,Math.min(n-1,v));
-  if(action==='idle'||action==='hurt')return 0;
+  if(action==='hurt')return 0;
+  if(action==='idle')return Math.floor(elapsed/11)%n;
   if(action==='land'){
     const progress=Math.min(0.999,(p.landClock||0)/Math.max(1,p.landDuration||9));
     const stage=Math.min(3,Math.floor(progress*4));
@@ -82,4 +83,37 @@ export function artMotion(action,p,landingTimer,elapsed){
   }
   stretchY+=breath;
   return {lean,stretchX,stretchY,shiftX};
+}
+
+/** Contact events are aligned to gait cycle boundaries, unlike a separate dust counter. */
+export function crossedFootContact(previousPhase,nextPhase){
+  const before=((previousPhase%1)+1)%1;
+  const after=((nextPhase%1)+1)%1;
+  return after<before || (before<.5 && after>=.5);
+}
+
+/** Four illustrated transition stages, sampled from the approved 2026 modern model sheet.
+ *  Three-quarter and front views replace the old horizontal squash illusion.
+ *  Stage 0/4 keep the original locomotion sprite; stage 1/3 show the source
+ *  three-quarter art; stage 2 shows the real approved front illustration.
+ */
+export function turnaroundPose(p){
+  if(!(p.turnTimer>0) || !p.ground || p.spin) return null;
+  const duration=Math.max(1,p.turnDuration||8);
+  const progress=Math.max(0,Math.min(1,1-p.turnTimer/duration));
+  if(progress<.16) return {name:'source',face:p.turnFrom||-p.face};
+  if(progress<.39) return {name:'three',face:p.turnFrom||-p.face};
+  if(progress<.62) return {name:'front',face:1};
+  if(progress<.86) return {name:'three',face:p.face};
+  return {name:'source',face:p.face};
+}
+
+/** Legacy fallback for missing illustrated turning assets. */
+export function facingTransform(p){
+  const remain=Math.max(0,p.turnTimer||0);
+  if(!remain)return {scaleX:p.face||1, turning:false};
+  const duration=Math.max(1,p.turnDuration||STANCE.turnFrames);
+  const progress=Math.max(0,Math.min(1,1-remain/duration));
+  const oldFace=p.turnFrom||-(p.face||1);
+  return {scaleX:oldFace*Math.cos(Math.PI*progress),turning:true};
 }

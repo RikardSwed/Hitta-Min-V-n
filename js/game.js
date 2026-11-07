@@ -1,13 +1,22 @@
-import {FRAME_COUNTS,FILE_PREFIX,selectAction,frameFor,advanceGait,artMotion} from './animator.js?v=0.21.0';
+import {FRAME_COUNTS,FILE_PREFIX,selectAction,frameFor,advanceGait,artMotion,crossedFootContact,facingTransform,turnaroundPose} from './animator.js?v=0.33.0';
 
 // All resources are local; the site works on static GitHub Pages.
-const cache='?v=0.21.0';
+const cache='?v=0.33.0';
 
 // Eight walk and eight run poses use four approved painted originals each, plus
 // four rigged passing frames per gait (single-source warps, not alpha ghosting).
 // Jump/spin and landing keep the previously approved drawn-source art.
 const animationLengths=FRAME_COUNTS;
 const animations={};
+// This is an opt-in experimental articulated gait, not approved final illustration.
+// F4 previews whole-body pose motion: painted head/shoulder/hand shifts plus art-directed legs; approved art stays default.
+const prototypeGait={walk:[],run:[]};
+let experimentalGait=false;
+for(const action of ['walk','run'])for(let i=0;i<8;i++){
+ const image=new Image();image.src=`assets/characters/rig-experiment/${action}_${String(i).padStart(2,'0')}.png${cache}`;
+ prototypeGait[action].push(image);
+}
+
 for(const [name,count] of Object.entries(animationLengths)){
  animations[name]=Array.from({length:count},(_,i)=>{
   const image=new Image();image.src=`assets/characters/production/${FILE_PREFIX[name]||name}_${String(i).padStart(2,'0')}.png${cache}`;return image;
@@ -16,6 +25,8 @@ for(const [name,count] of Object.entries(animationLengths)){
 
 const panorama=new Image();panorama.src='assets/backgrounds/approved-park-panorama.jpg'+cache;
 const portrait=new Image();portrait.src='assets/characters/production/idle_00.png'+cache;
+// Approved modern front and three-quarter paintings, extracted as transparent frames.
+const turnArt={};for(const name of ['front','three']){const image=new Image();image.src=`assets/characters/turning/${name}.png${cache}`;turnArt[name]=image;}
 const artwork={};
 for(const [key,filename] of Object.entries({
   wall:'mossy-wall.png',ledge:'grass-ledge.png',lamp:'park-lamp.png',flowers:'flowers.png',
@@ -38,7 +49,7 @@ let running=false,paused=false,won=false,camera=0,tick=0,sound=true,last=0,check
 const FRAME_MS=1000/60;let accumulator=0,renderDt=0,simFrames=0;
 let coyote=0,jumpBuffer=0,heroPose="idle",heroPoseTime=0,stepDistance=0,lastDustStep=-1;
 let motionTime=0,lastGround=false,landSquash=0,jumpLift=0,footTravel=0,debugArt=false,artState='idle',artFrame=0;
-const VERSION='0.21.0';
+const VERSION='0.33.0';
 let visitedSections=new Set();
 const keys=new Set(),pressed=new Set();
 const platforms=[{x:0,y:GROUND,w:670,h:90},{x:735,y:GROUND,w:690,h:90},{x:1500,y:GROUND,w:670,h:90},{x:2250,y:GROUND,w:700,h:90},{x:3040,y:GROUND,w:860,h:90},
@@ -46,13 +57,13 @@ const platforms=[{x:0,y:GROUND,w:670,h:90},{x:735,y:GROUND,w:690,h:90},{x:1500,y
 const initialItems=[{x:300,y:334},{x:518,y:266},{x:890,y:332},{x:1100,y:267},{x:1610,y:330},{x:1840,y:270},{x:2380,y:327},{x:2640,y:269},{x:3170,y:333},{x:3440,y:269}];
 const initialEnemies=[{x:570,min:510,max:645},{x:930,min:770,max:1100},{x:1660,min:1520,max:1900},{x:2090,min:1980,max:2160},{x:2440,min:2270,max:2660},{x:3260,min:3070,max:3450},{x:3660,min:3530,max:3810}];
 let items=[],enemies=[];
-const player={x:80,y:300,w:31,h:54,vx:0,vy:0,face:1,ground:false,hp:99,inv:0,attack:0,attackCD:0,crouch:false,spin:false,spinClock:0,gaitPhase:0,airAge:0,landTimer:0,landClock:0,landDuration:9,accel:0};
-function reset(full=true){checkpoint=full?80:checkpoint;player.x=checkpoint;player.y=280;player.vx=0;player.vy=0;player.hp=99;player.inv=0;player.attack=0;player.ground=false;player.spin=false;player.spinClock=0;player.gaitPhase=0;player.airAge=0;player.landTimer=0;player.landClock=0;player.landDuration=9;player.accel=0;camera=0;tick=0;accumulator=0;simFrames=0;score=0;particles=[];coyote=0;jumpBuffer=0;heroPose="idle";heroPoseTime=0;stepDistance=0;lastDustStep=-1;motionTime=0;lastGround=false;landSquash=0;jumpLift=0;footTravel=0;visitedSections=new Set();items=initialItems.map((v,i)=>({...v,id:i,taken:false}));enemies=initialEnemies.map((v,i)=>({...v,id:i,y:GROUND-29,w:39,h:29,dir:i%2?1:-1,alive:true}));if(full){try{localStorage.removeItem('stadsparken-checkpoint')}catch{}}}
+const player={x:80,y:300,w:31,h:54,vx:0,vy:0,face:1,ground:false,hp:99,inv:0,attack:0,attackCD:0,crouch:false,spin:false,spinClock:0,gaitPhase:0,airAge:0,landTimer:0,landClock:0,landDuration:9,accel:0,turnTimer:0,turnDuration:8,turnFrom:1,groundContactCount:0};
+function reset(full=true){checkpoint=full?80:checkpoint;player.x=checkpoint;player.y=280;player.vx=0;player.vy=0;player.hp=99;player.inv=0;player.attack=0;player.ground=false;player.spin=false;player.spinClock=0;player.gaitPhase=0;player.airAge=0;player.landTimer=0;player.landClock=0;player.landDuration=9;player.accel=0;player.turnTimer=0;player.turnDuration=8;player.turnFrom=1;player.groundContactCount=0;camera=0;tick=0;accumulator=0;simFrames=0;score=0;particles=[];coyote=0;jumpBuffer=0;heroPose="idle";heroPoseTime=0;stepDistance=0;lastDustStep=-1;motionTime=0;lastGround=false;landSquash=0;jumpLift=0;footTravel=0;visitedSections=new Set();items=initialItems.map((v,i)=>({...v,id:i,taken:false}));enemies=initialEnemies.map((v,i)=>({...v,id:i,y:GROUND-29,w:39,h:29,dir:i%2?1:-1,alive:true}));if(full){try{localStorage.removeItem('stadsparken-checkpoint')}catch{}}}
 function show(title,text,button){overlayTitle.textContent=title;overlayText.textContent=text;document.querySelector('#play').textContent=button;overlay.classList.remove('hidden')}
 function hide(){overlay.classList.add('hidden')}
 function start(){if(won){reset();won=false}if(!running&&player.hp<=0)reset(false);running=true;paused=false;pressed.clear();hide()}
 document.querySelector('#play').onclick=start;document.querySelector('#restart').onclick=()=>{reset();running=true;paused=false;won=false;hide()};document.querySelector('#sound').onclick=()=>{sound=!sound;document.querySelector('#sound').textContent=sound?'♪ Ljud: på':'♪ Ljud: av'};
-window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();if(!keys.has(e.code))pressed.add(e.code);keys.add(e.code);if(e.code==='F3'&&!e.repeat){e.preventDefault();debugArt=!debugArt}if(['KeyP','Escape'].includes(e.code)&&!e.repeat){if(running){paused=!paused;if(paused)show('Paus','Ta en liten paus. Parken väntar på dig.','Fortsätt →');else hide()}}});window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{keys.clear();pressed.clear();if(running&&!paused){paused=true;show('Paus','Spelet pausades när fönstret tappade fokus.','Fortsätt →')}});
+window.addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code))e.preventDefault();if(!keys.has(e.code))pressed.add(e.code);keys.add(e.code);if(e.code==='F3'&&!e.repeat){e.preventDefault();debugArt=!debugArt}if(e.code==='F4'&&!e.repeat){e.preventDefault();experimentalGait=!experimentalGait}if(['KeyP','Escape'].includes(e.code)&&!e.repeat){if(running){paused=!paused;if(paused)show('Paus','Ta en liten paus. Parken väntar på dig.','Fortsätt →');else hide()}}});window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>{keys.clear();pressed.clear();if(running&&!paused){paused=true;show('Paus','Spelet pausades när fönstret tappade fokus.','Fortsätt →')}});
 const held=(...a)=>a.some(k=>keys.has(k)),tap=(...a)=>a.some(k=>pressed.has(k));
 let audio;function beep(freq=440,dur=.08,type='sine'){if(!sound)return;try{audio??=new (window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,audio.currentTime);o.frequency.exponentialRampToValueAtTime(Math.max(70,freq*.7),audio.currentTime+dur);g.gain.setValueAtTime(.035,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.connect(g).connect(audio.destination);o.start();o.stop(audio.currentTime+dur)}catch{}}
 function overlap(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
@@ -61,20 +72,18 @@ function hurt(){if(player.inv)return;player.hp=Math.max(0,player.hp-18);player.i
 function update(dt){tick+=dt;motionTime+=dt;landSquash=Math.max(0,landSquash-dt*0.22);jumpLift=Math.max(0,jumpLift-dt*0.18);visitedSections.add(Math.min(11,Math.floor(player.x/(WORLD/12))));const p=player;const dir=(held('ArrowRight','KeyD')?1:0)-(held('ArrowLeft','KeyA')?1:0);p.crouch=held('ArrowDown','KeyS')&&p.ground;p.attack=Math.max(0,p.attack-dt);p.attackCD=Math.max(0,p.attackCD-dt);p.inv=Math.max(0,p.inv-dt);
 if(p.landTimer>0){p.landClock+=dt;p.landTimer=Math.max(0,p.landTimer-dt)}
 if(p.spin&&!p.ground)p.spinClock+=dt;coyote=p.ground?7:Math.max(0,coyote-dt);jumpBuffer=Math.max(0,jumpBuffer-dt);if(tap('Space','KeyW','ArrowUp'))jumpBuffer=8;
-if(dir)p.face=dir;
+if(dir&&dir!==p.face){if(p.ground&&!p.spin){p.turnFrom=p.face;p.turnDuration=8;p.turnTimer=8;}else p.turnTimer=0;p.face=dir;}
 if(jumpBuffer>0&&coyote>0&&!p.crouch){p.vy=-13.7;p.ground=false;p.airAge=0;coyote=0;jumpBuffer=0;jumpLift=1;p.landTimer=0;p.landClock=0;p.spin=(dir!==0);p.spinClock=0;beep(480,.1)}
 if(!held('Space','KeyW','ArrowUp')&&p.vy< -4)p.vy+=.52*dt;
 if(tap('KeyJ','KeyX')&&!p.attackCD&&!p.crouch){p.attack=13;p.attackCD=22;beep(720,.09,'triangle')}
 const oldVX=p.vx;p.vx+=(dir*(p.crouch?1.35:(held('ShiftLeft','ShiftRight')?5.95:3.75))-p.vx)*Math.min(1,(held('ShiftLeft','ShiftRight')?0.24:0.2)*dt);p.accel+=(p.vx-oldVX-p.accel)*Math.min(1,0.32*dt);
-const oldY=p.y,wasGrounded=p.ground,oldX=p.x;p.x=Math.max(0,Math.min(WORLD-p.w,p.x+p.vx*dt));if(wasGrounded&&!p.crouch){const dist=Math.abs(p.x-oldX);stepDistance+=dist;p.gaitPhase=advanceGait(p.gaitPhase,dist,Math.abs(p.vx)>4.35)}p.vy=Math.min(17,p.vy+.66*dt);const impactVy=p.vy;p.y+=p.vy*dt;p.ground=false;
+const phaseBefore=p.gaitPhase;const oldY=p.y,wasGrounded=p.ground,oldX=p.x;p.x=Math.max(0,Math.min(WORLD-p.w,p.x+p.vx*dt));if(wasGrounded&&!p.crouch){const dist=Math.abs(p.x-oldX);stepDistance+=dist;p.gaitPhase=advanceGait(p.gaitPhase,dist,Math.abs(p.vx)>4.35)}p.vy=Math.min(17,p.vy+.66*dt);const impactVy=p.vy;p.y+=p.vy*dt;p.ground=false;
 for(const plat of platforms){if(p.x+p.w>plat.x+5&&p.x<plat.x+plat.w-5&&oldY+p.h<=plat.y+8&&p.y+p.h>=plat.y&&p.vy>=0){p.y=plat.y-p.h;p.vy=0;p.ground=true}}
-// Ground dust is tied to actual travel, so shoes don't throw out particles while idle.
-if(p.ground&&!p.crouch&&Math.abs(p.vx)>1.3){
- const stride=(Math.abs(p.vx)>4.25?140:110)/2;
- const stepNumber=Math.floor(stepDistance/stride);
- if(stepNumber!==lastDustStep){lastDustStep=stepNumber;
-   for(let i=0;i<4;i++)particles.push({x:p.x+p.w/2+(Math.random()-.5)*18,y:p.y+p.h-3,vx:(Math.random()-.5)*1.8,vy:-Math.random()*1.8-.2,life:14+Math.random()*10,color:'#f6e6bb',dust:true});
- }
+// Dust appears when the painted gait reaches a contact pose, not on an
+// independent distance counter that can drift out of sync with the shoes.
+if(p.ground&&!p.crouch&&Math.abs(p.vx)>1.3&&crossedFootContact(phaseBefore,p.gaitPhase)){
+ p.groundContactCount++;
+ for(let i=0;i<5;i++)particles.push({x:p.x+p.w/2+(Math.random()-.5)*14,y:p.y+p.h-3,vx:-p.face*Math.random()*1.3+(Math.random()-.5),vy:-Math.random()*1.8-.2,life:14+Math.random()*10,color:'#f6e6bb',dust:true});
 }
 if(!wasGrounded&&p.ground&&p.vy===0){
  p.spin=false;p.spinClock=0;p.airAge=0;
@@ -83,12 +92,12 @@ if(!wasGrounded&&p.ground&&p.vy===0){
  for(let i=0;i<9;i++)particles.push({x:p.x+p.w/2+(Math.random()-.5)*28,y:p.y+p.h-3,vx:(Math.random()-.5)*3,vy:-Math.random()*2.8-.3,life:18+Math.random()*10,color:'#e7e0c4',dust:true});
 }
 if(!p.ground)p.airAge+=dt;
-if(p.y>H+100){p.hp=Math.max(0,p.hp-25);p.x=checkpoint;p.y=230;p.vx=0;p.vy=0;p.inv=75;p.spin=false;p.spinClock=0;p.airAge=0;p.landTimer=0;p.landClock=0;if(p.hp<=0){running=false;show('Energin tog slut!','Försök igen från kontrollpunkten.','Försök igen →')}beep(180,.2)}
+if(p.y>H+100){p.hp=Math.max(0,p.hp-25);p.x=checkpoint;p.y=230;p.vx=0;p.vy=0;p.inv=75;p.spin=false;p.spinClock=0;p.turnTimer=0;p.airAge=0;p.landTimer=0;p.landClock=0;if(p.hp<=0){running=false;show('Energin tog slut!','Försök igen från kontrollpunkten.','Försök igen →')}beep(180,.2)}
 for(const item of items){if(item.taken)continue;const dx=p.x+p.w/2-item.x,dy=p.y+p.h/2-item.y;if(dx*dx+dy*dy<35*35){item.taken=true;p.hp=Math.min(99,p.hp+15);score++;burst(item.x,item.y,'#ffdb69',13);beep(950,.13)}}
 for(const e of enemies){if(!e.alive)continue;e.x+=e.dir*1.25*dt;if(e.x<e.min||e.x>e.max)e.dir*=-1;if(p.attack>0){const slash={x:p.face>0?p.x+p.w-2:p.x-58,y:p.y+5,w:60,h:48};if(overlap(slash,e)){e.alive=false;burst(e.x+18,e.y+12,'#9ae5d7',18);beep(620,.16,'square');continue}}if(overlap(p,e))hurt()}
 if(p.x>1920&&checkpoint<1900){checkpoint=1930;try{localStorage.setItem('stadsparken-checkpoint','1930')}catch{}burst(1940,390,'#9df4ff',25);beep(1050,.25)}
 if(p.x>WORLD-140){won=true;running=false;show('Banan avklarad! ✨',`Du hittade vägen genom Stadsparken och samlade ${score} av ${items.length} energikapslar. Nästa äventyr väntar i skolan!`,'Spela igen →');beep(1100,.4)}
-for(const q of particles){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=.18*dt;q.life-=dt}particles=particles.filter(q=>q.life>0);camera+=(Math.max(0,Math.min(WORLD-W,p.x-330))-camera)*Math.min(1,.085*dt);lastGround=p.ground;pressed.clear();advanceArtClock()}
+for(const q of particles){q.x+=q.vx*dt;q.y+=q.vy*dt;q.vy+=.18*dt;q.life-=dt}particles=particles.filter(q=>q.life>0);camera+=(Math.max(0,Math.min(WORLD-W,p.x-330))-camera)*Math.min(1,.085*dt);lastGround=p.ground;if(p.turnTimer>0)p.turnTimer=Math.max(0,p.turnTimer-dt);pressed.clear();advanceArtClock()}
 function rounded(x,y,w,h,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
 function line(points,color,width=2){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke()}
 function circle(x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
@@ -234,16 +243,23 @@ function advanceArtClock(){
 function hero(){
  const p=player,screenX=p.x-camera+p.w/2,footY=p.y+p.h;
  const action=heroPose;
- const index=frameFor(action,p,heroPoseTime),frames=animations[action];
+ const index=frameFor(action,p,heroPoseTime),frames=(experimentalGait&&prototypeGait[action])?prototypeGait[action]:animations[action];
  const img=frames[Math.max(0,Math.min(index,frames.length-1))];
- artState=action;artFrame=index;
+ const turn=turnaroundPose(p);
+ // The approved turn paintings are full-body poses, not compressed walking frames.
+ const illustratedTurn=turn&&turn.name!=='source'&&ready(turnArt[turn.name]);
+ const actualImage=illustratedTurn?turnArt[turn.name]:img;
+ artState=illustratedTurn?'vändning-'+turn.name:action;artFrame=index;
  const {lean,stretchX,stretchY,shiftX}=artMotion(action,p,landSquash,heroPoseTime);
- // The contact shadow belongs to the physical ground, never the rotating sprite.
+ const direction=illustratedTurn?turn.face:(turn?turn.face:facingTransform(p).scaleX);
+ // The contact shadow belongs to the physical ground, never the turning image.
  if(p.ground){ctx.fillStyle='#122b3340';ctx.beginPath();ctx.ellipse(screenX,footY+1,28,4.5,0,0,Math.PI*2);ctx.fill()}
- ctx.save();ctx.translate(screenX+shiftX,footY);ctx.scale(p.face*stretchX,stretchY);ctx.rotate(lean*p.face);
+ ctx.save();ctx.translate(screenX+(illustratedTurn?0:shiftX),footY);
+ ctx.scale(direction*(illustratedTurn?1:stretchX),illustratedTurn?1:stretchY);
+ ctx.rotate(illustratedTurn?0:lean*(direction<0?-1:1));
  if(p.inv>0&&Math.floor(tick/4)%2)ctx.globalAlpha=.52;
- // Exact same 220x220 image coordinate system for all frames; painted foot anchor at (110,205).
- if(ready(img))ctx.drawImage(img,-110,-205,220,220);
+ // Shared 220x220 sprite coordinates: painted foot anchor stays at (110,205).
+ if(ready(actualImage))ctx.drawImage(actualImage,-110,-205,220,220);
  else{rounded(-17,-104,34,104,8,'#f5efe7');circle(0,-110,18,'#e9c05f')}
  if(p.attack>0){
    const progress=(13-p.attack)/13;
@@ -256,8 +272,8 @@ function hero(){
    ctx.strokeRect(p.x-camera,p.y,p.w,p.h);
    ctx.strokeStyle='#ffe7a1';ctx.beginPath();ctx.moveTo(screenX-13,footY);ctx.lineTo(screenX+13,footY);ctx.moveTo(screenX,footY-13);ctx.lineTo(screenX,footY+13);ctx.stroke();
    rounded(13,149,276,65,8,'#123044ed');ctx.fillStyle='#fff3d5';ctx.font='bold 14px monospace';
-   ctx.fillText(`${action} · ruta ${index+1}/${frames.length}`,25,175);
-   ctx.font='12px monospace';ctx.fillText(`mark ${p.ground?'JA':'NEJ'} · fart ${p.vx.toFixed(1)} · fas ${(p.gaitPhase||0).toFixed(2)}`,25,195);
+   ctx.fillText(`${artState} · ruta ${index+1}/${frames.length}`,25,175);
+   ctx.font='12px monospace';ctx.fillText(`mark ${p.ground?'JA':'NEJ'} · fart ${p.vx.toFixed(1)} · fas ${(p.gaitPhase||0).toFixed(2)} · steg ${p.groundContactCount}`,25,195);
    ctx.restore();
  }
 }
@@ -321,7 +337,9 @@ function ambient(){
  }
  ctx.restore();
 }
-function render(){background();water();drawPlatforms();gardenArches();scenery();drawItems();drawEnemies();hero();effects();ambient();hud();minimap();ctx.fillStyle='#0e263cbb';ctx.fillRect(W-215,H-30,215,30);ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText(`Stadsparken · v${VERSION}`,W-195,H-11)}
+function render(){background();water();drawPlatforms();gardenArches();scenery();drawItems();drawEnemies();hero();effects();ambient();hud();minimap();
+ if(experimentalGait){rounded(361,97,312,37,10,'#163c4ce8');ctx.fillStyle='#fff0c1';ctx.font='bold 14px system-ui';ctx.fillText('F4 · TEST: HELKROPPSRÖRELSE v0.33',374,120)}
+ ctx.fillStyle='#0e263cbb';ctx.fillRect(W-215,H-30,215,30);ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.fillText(`Stadsparken · v${VERSION}`,W-195,H-11)}
 // Deterministic 60Hz game simulation with a separate refresh-rate-independent render.
 // Cap long frame gaps to avoid tunneling; paused frames never accumulate hidden time.
 function loop(t){
